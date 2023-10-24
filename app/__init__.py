@@ -29,7 +29,9 @@ def get_names():
 
     return jsonify(data)
 
-
+@app.route('/signin')
+def signin():
+    return render_template('signin.html')
 
 
 
