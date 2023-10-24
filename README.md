@@ -44,6 +44,26 @@ pip install flask cx_Oracle
 
 This will install Flask and the Oracle database driver (cx_Oracle) within your virtual environment.
 
+### Setting Up a New Python Environment from requirements.txt
+
+To quickly establish a Python environment for the project with all the necessary dependencies, follow these steps:
+
+1. **Create a Virtual Environment (optional but recommended)**
+
+   It's a best practice to create a virtual environment to isolate your project's dependencies. You can use the `venv` module or a tool like `virtualenv`. After creating the virtual environment, activate it by following the commands outlined in the "Setting Up a Virtual Environment" section.
+
+2. **Install Dependencies from requirements.txt**
+
+   Run the following command to install the required packages and their specified versions from the "requirements.txt" file. Ensure that you are in the project directory and, if you created a virtual environment, it should be activated.
+
+```bash
+pip install -r requirements.txt
+```
+
+3. **You're all set!**
+
+   Your Python environment is now configured with the necessary packages to run this project.
+
 ### Configuration
 
 Before running the application, make sure to add a `config.py` file. This file may contain configuration settings specific to your project, such as database credentials, API keys, or other environment-specific variables.
