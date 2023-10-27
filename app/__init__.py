@@ -18,12 +18,13 @@ def index():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form['username']
+        name = request.form['name']
+        lastname = request.form['lastname']
         email = request.form['email']
         password = request.form['password']
 
-        cursor.execute("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)",
-                       {"username": username, "email": email, "password": password})
+        cursor.execute("INSERT INTO users (name, lastname, email, password) VALUES (:name, :lastname, :email, :password)",
+                       {"name": name, "lastname": lastname, "email": email, "password": password})
         conn.commit()
         return redirect(url_for('login'))
     return render_template('signup.html')
@@ -32,11 +33,11 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
 
-        cursor.execute("SELECT * FROM users WHERE username = :username AND password = :password",
-                       {"username": username, "password": password})
+        cursor.execute("SELECT * FROM users WHERE email = :email AND password = :password",
+                       {"email": email, "password": password})
         user = cursor.fetchone()
 
         if user:
