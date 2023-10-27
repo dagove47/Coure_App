@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, abort
 from config import DB_CONNECTION_STRING, SECRET_KEY
 import cx_Oracle
 
@@ -23,10 +23,20 @@ def signup():
         email = request.form['email']
         password = request.form['password']
 
-        cursor.execute("INSERT INTO users (name, lastname, email, password) VALUES (:name, :lastname, :email, :password)",
+        try:
+            cursor.execute("INSERT INTO users (name, lastname, email, password) VALUES (:name, :lastname, :email, :password)",
                        {"name": name, "lastname": lastname, "email": email, "password": password})
-        conn.commit()
-        return redirect(url_for('login'))
+            conn.commit()
+            return redirect(url_for('login'))
+        except cx_Oracle.IntegrityError as e:
+            conn.rollback()
+            error = "User already registered"
+            return render_template('signup.html', error=error)
+        except Exception as e:
+            conn.rollback()
+            error = "Failed to register user"
+            return render_template('signup.html', error=error)
+        
     return render_template('signup.html')
 
 
@@ -49,14 +59,16 @@ def login():
 
     return render_template('login.html')
 
+@app.errorhandler(404)
+def notFound(e):
+    return render_template('notFound.html'), 404
 
 @app.route('/home')
 def home():
     if 'user_id' in session:
         return render_template('home.html')
     else:
-        return redirect(url_for('login'))
-
+        abort(404)
 
 @app.route('/logout')
 def logout():
