@@ -87,8 +87,8 @@ def login():
     return render_template('login.html')
 
 @app.errorhandler(404)
-def notFound(e):
-    return render_template('notFound.html'), 404
+def not_found(e):
+    return render_template('not_found.html'), 404
 
 @app.route('/home')
 def home():
@@ -102,12 +102,75 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
-@app.route('/prueba')
-def signin():
-    return render_template('prueba.html')
+@app.route('/facturas')
+def facturas():
+    conn, cursor = get_db_connection()
 
+    # Obtener la lista de facturas desde la base de datos
+    cursor.execute("SELECT * FROM Factura")
+    
+    # Obtener los nombres de las columnas
+    columnas = [i[0] for i in cursor.description]
 
+    facturas_list = cursor.fetchall()  # Obtener la lista de facturas
 
+    close_db_connection(conn, cursor)
+
+    return render_template('facturas.html', facturas=facturas_list, columnas=columnas)
+
+@app.route('/factura/agregar', methods=['POST'])
+def agregar_factura():
+    conn, cursor = get_db_connection()
+
+    if request.method == 'POST':
+        fecha = request.form['fecha']
+        id_cliente = request.form['id_cliente']
+        total = request.form['total']
+
+        # Llamar al bloque PL/SQL para insertar una nueva factura
+        cursor.callproc("insertar_nueva_factura", [fecha, id_cliente, total])
+        conn.commit()
+
+    close_db_connection(conn, cursor)
+
+    return redirect(url_for('facturas'))
+
+@app.route('/factura/editar/<int:id_factura>')
+def editar_factura(id_factura):
+    conn, cursor = get_db_connection()
+
+    # Obtener la factura por su ID desde la base de datos
+    cursor.execute("SELECT * FROM Factura WHERE id_factura = :id", {"id": id_factura})
+    factura = cursor.fetchone()
+
+    close_db_connection(conn, cursor)
+
+    return render_template('editar_factura.html', factura=factura)
+
+@app.route('/factura/actualizar/<int:id_factura>', methods=['POST'])
+def actualizar_factura(id_factura):
+    conn, cursor = get_db_connection()
+
+    if request.method == 'POST':
+        total = request.form['total']
+
+        # Llamar al bloque PL/SQL para actualizar una factura
+        cursor.callproc("actualizar_factura", [id_factura, total])
+        conn.commit()
+
+    close_db_connection(conn, cursor)
+
+    return redirect(url_for('facturas'))
+
+@app.route('/factura/eliminar/<int:id_factura>')
+def eliminar_factura(id_factura):
+    conn, cursor = get_db_connection()
+
+    # Llamar al bloque PL/SQL para eliminar una factura
+    cursor.callproc("eliminar_factura", [id_factura])
+    conn.commit()
+
+    close_db_connection(conn, cursor)
 
 
 
