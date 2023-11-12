@@ -6,9 +6,25 @@ CREATE TABLE users (
     lastname VARCHAR2(50) NOT NULL,
     email VARCHAR2(100) NOT NULL,
     password VARCHAR2(100) NOT NULL,
+    id_rol number not null, --Nuevo entry en la tabla users.
     CONSTRAINT users_pk PRIMARY KEY (id),
     CONSTRAINT email_unique UNIQUE (email)
 );
+
+
+-- Crear Tabla de roles. 
+CREATE TABLE roles (
+id_rol number primary key, 
+descripcion varchar (50)
+);
+
+-- Rol 1
+INSERT INTO roles (id_rol, descripcion)
+VALUES (1, 'Admin');
+
+-- Rol 2
+INSERT INTO roles (id_rol, descripcion)
+VALUES (1, 'User');
  
 COMMIT;
 SELECT * FROM USERS;

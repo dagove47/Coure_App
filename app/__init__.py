@@ -38,6 +38,7 @@ def index():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     conn, cursor = get_db_connection()
+    rol = 2
 
     if request.method == 'POST':
         name = request.form['name']
@@ -45,10 +46,17 @@ def signup():
         email = request.form['email']
         password = request.form['password']
 
+        #Modifica la variable rol 
+          # Rol 1 es Admin 
+          # Role 2 es Usuario
+
+        if "@admin.com" in email: 
+            rol=1
+
         if conn and cursor:
             try:
-                cursor.execute("INSERT INTO users (name, lastname, email, password) VALUES (:name, :lastname, :email, :password)",
-                               {"name": name, "lastname": lastname, "email": email, "password": password})
+                cursor.execute("INSERT INTO users (name, lastname, email, password, id_rol) VALUES (:name, :lastname, :email, :password, :rol)",
+                               {"name": name, "lastname": lastname, "email": email, "password": password, "rol": rol})
                 conn.commit()
                 return redirect(url_for('login'))
             except cx_Oracle.IntegrityError as e:
@@ -63,6 +71,8 @@ def signup():
                 close_db_connection(conn, cursor)
 
     return render_template('signup.html')
+
+# LOGIN 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -79,7 +89,14 @@ def login():
 
             if user:
                 session['user_id'] = user[0]
-                return redirect(url_for('home'))
+                session['id_rol'] =  user[5] #Campo del role
+
+                #Condicional rol 
+                if session['id_rol'] ==1:
+                    return redirect(url_for('admin'))
+                elif session ['id_rol'] ==2:
+                    return redirect(url_for('home'))
+            
             else:
                 error = "Invalid credentials. Please try again."
                 return render_template('login.html', error=error)
@@ -88,14 +105,26 @@ def login():
 
 @app.errorhandler(404)
 def not_found(e):
-    return render_template('not_found.html'), 404
+    return render_template('notFound.html'), 404
 
+
+
+#USER HOMEPAGE
 @app.route('/home')
 def home():
     if 'user_id' in session:
         return render_template('home.html')
     else:
         abort(404)
+
+#ADMIN HOMEPAGE
+@app.route('/admin')
+def admin():
+    if 'user_id' in session:
+        return render_template('admin.html')
+    else:
+        abort(404)
+
 
 @app.route('/logout')
 def logout():
