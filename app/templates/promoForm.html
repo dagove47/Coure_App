@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Promociones</title>
+</head>
+<body>
+    <h1>Promociones</h1>
+    <form method="POST">
+        <input type="text" name="Titulo" placeholder="titulo" required><br>
+        <input type="text" name="Descripcion" placeholder="descripcion" required><br>
+        <input type="email" name="Fecha" placeholder="fecha" required><br>
+        <input type="submit" value="Agregar">
+    </form>
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+</body>
+</html>

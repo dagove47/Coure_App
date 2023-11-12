@@ -109,19 +109,49 @@ def not_found(e):
 
 
 
+#ROLES 
+
+from functools import wraps
+from flask import session, flash, redirect, url_for
+
+def role_required(required_role):
+    def decorator(func):
+        @wraps(func)
+        def decorated_function(*args, **kwargs):
+            if 'id_rol' in session and session['id_rol'] == required_role:
+                return func(*args, **kwargs)
+            else:
+                flash('You do not have the required permissions to access this page.', 'danger')
+                return redirect(url_for('/'))
+        return decorated_function
+    return decorator
+
+
 #USER HOMEPAGE
 @app.route('/home')
+@role_required(required_role=2)
 def home():
     if 'user_id' in session:
         return render_template('home.html')
     else:
         abort(404)
 
+
 #ADMIN HOMEPAGE
 @app.route('/admin')
+@role_required(required_role=1)
 def admin():
     if 'user_id' in session:
         return render_template('admin.html')
+    else:
+        abort(404)
+
+#PROMOS
+@app.route('/promos')
+@role_required(required_role=2)
+def promo():
+    if 'user_id' in session:
+        return render_template('promos.html')
     else:
         abort(404)
 
