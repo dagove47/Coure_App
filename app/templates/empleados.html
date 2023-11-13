@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>CRUD Empleados</title>
+    <!-- Enlace a Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Tu CSS personalizado (reemplázalo con tu propia hoja de estilo) -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container mt-4">
+    <h2>CRUD Empleados</h2>
+
+    <!-- Formulario para insertar empleado -->
+    <form action="/insertar_empleado" method="post">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="id_empleado">ID Empleado</label>
+                <input type="text" class="form-control" id="id_empleado" name="id_empleado" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="apellido">Apellido</label>
+                <input type="text" class="form-control" id="apellido" name="apellido" required>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="direccion">Dirección</label>
+                <input type="text" class="form-control" id="direccion" name="direccion" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="telefono">Teléfono</label>
+                <input type="text" class="form-control" id="telefono" name="telefono" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="puesto">Puesto</label>
+                <input type="text" class="form-control" id="puesto" name="puesto" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="fecha_contratacion">Fecha Contratación</label>
+                <input type="date" class="form-control" id="fecha_contratacion" name="fecha_contratacion" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="id_usuario">ID Usuario</label>
+                <input type="text" class="form-control" id="id_usuario" name="id_usuario" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Insertar Empleado</button>
+    </form>
+
+    <!-- Tabla para mostrar empleados -->
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>ID Empleado</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Puesto</th>
+                <th>Fecha Contratación</th>
+                <th>ID Usuario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for empleado in empleados %}
+            <tr>
+                <td>{{ empleado[0] }}</td>
+                <td>{{ empleado[1] }}</td>
+                <td>{{ empleado[2] }}</td>
+                <td>{{ empleado[3] }}</td>
+                <td>{{ empleado[4] }}</td>
+                <td>{{ empleado[5] }}</td>
+                <td>{{ empleado[6] }}</td>
+                <td>{{ empleado[7] }}</td>
+                <td>
+                    <!-- Enlaces para actualizar y eliminar -->
+                    <a href="/actualizar_empleado/{{ empleado[0] }}" class="btn btn-warning btn-sm">Actualizar</a>
+                    <a href="/eliminar_empleado/{{ empleado[0] }}" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Enlace a Bootstrap JS y jQuery (asegúrate de incluirlos antes de cerrar el cuerpo) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.8/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

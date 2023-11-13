@@ -82,6 +82,29 @@ CREATE TABLE Factura (
     total NUMBER,
     CONSTRAINT fk_cliente FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente)
 );
+-- Tabla de Usuarios
+CREATE TABLE usuarios (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(255),
+    apellido VARCHAR(255),
+    correo_electronico VARCHAR(255),
+    contrasena VARCHAR(255)
+);
+
+-- Tabla de Empleados
+CREATE TABLE empleados (
+    id_empleado INT PRIMARY KEY,
+    nombre VARCHAR(255),
+    apellido VARCHAR(255),
+    direccion VARCHAR(255),
+    telefono VARCHAR(20),
+    puesto VARCHAR(255),
+    fecha_contratacion DATE,
+    id_usuario INT,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+
+
 
 -- Clientes
 -- Insertar nuevo cliente
@@ -97,6 +120,8 @@ BEGIN
     COMMIT;
 END insertar_nuevo_cliente;
 /
+
+
 
 -- Actualizar cliente
 CREATE OR REPLACE PROCEDURE actualizar_cliente AS
@@ -188,6 +213,115 @@ BEGIN
     INTO :NEW.reserva_id
     FROM dual;
 END;
+/
+
+
+/// Insertar usuario 
+
+CREATE OR REPLACE PROCEDURE insertar_usuario(
+    p_id INT,
+    p_nombre VARCHAR2,
+    p_apellido VARCHAR2,
+    p_correo_electronico VARCHAR2,
+    p_contrasena VARCHAR2
+)
+AS
+BEGIN
+    INSERT INTO usuarios(id, nombre, apellido, correo_electronico, contrasena)
+    VALUES (p_id, p_nombre, p_apellido, p_correo_electronico, p_contrasena);
+    COMMIT;
+END insertar_usuario;
+/
+
+
+///Actualizar un usuario 
+
+CREATE OR REPLACE PROCEDURE actualizar_usuario(
+    p_id INT,
+    p_nombre VARCHAR2,
+    p_apellido VARCHAR2,
+    p_correo_electronico VARCHAR2,
+    p_contrasena VARCHAR2
+)
+AS
+BEGIN
+    UPDATE usuarios
+    SET nombre = p_nombre,
+        apellido = p_apellido,
+        correo_electronico = p_correo_electronico,
+        contrasena = p_contrasena
+    WHERE id = p_id;
+    COMMIT;
+END actualizar_usuario;
+/
+
+///Eliminar un usuario 
+
+CREATE OR REPLACE PROCEDURE eliminar_usuario(p_id INT)
+AS
+BEGIN
+    DELETE FROM usuarios WHERE id = p_id;
+    COMMIT;
+END eliminar_usuario;
+/
+
+///Insertar un empleado 
+
+CREATE OR REPLACE PROCEDURE insertar_empleado(
+    p_id_empleado INT,
+    p_nombre VARCHAR2,
+    p_apellido VARCHAR2,
+    p_direccion VARCHAR2,
+    p_telefono VARCHAR2,
+    p_puesto VARCHAR2,
+    p_fecha_contratacion DATE,
+    p_id_usuario INT
+)
+AS
+BEGIN
+    INSERT INTO empleados(id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario)
+    VALUES (p_id_empleado, p_nombre, p_apellido, p_direccion, p_telefono, p_puesto, p_fecha_contratacion, p_id_usuario);
+    COMMIT;
+END insertar_empleado;
+/
+
+///Actualizar un empleado 
+
+CREATE OR REPLACE PROCEDURE actualizar_empleado(
+    p_id_empleado INT,
+    p_nombre VARCHAR2,
+    p_apellido VARCHAR2,
+    p_direccion VARCHAR2,
+    p_telefono VARCHAR2,
+    p_puesto VARCHAR2,
+    p_fecha_contratacion DATE,
+    p_id_usuario INT
+)
+AS
+BEGIN
+    UPDATE empleados
+    SET nombre = p_nombre,
+        apellido = p_apellido,
+        direccion = p_direccion,
+        telefono = p_telefono,
+        puesto = p_puesto,
+        fecha_contratacion = p_fecha_contratacion,
+        id_usuario = p_id_usuario
+    WHERE id_empleado = p_id_empleado;
+    COMMIT;
+END actualizar_empleado;
+/
+
+
+
+///Eliminar un empleado 
+
+CREATE OR REPLACE PROCEDURE eliminar_empleado(p_id_empleado INT)
+AS
+BEGIN
+    DELETE FROM empleados WHERE id_empleado = p_id_empleado;
+    COMMIT;
+END eliminar_empleado;
 /
 
 

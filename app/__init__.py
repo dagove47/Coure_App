@@ -270,6 +270,132 @@ def reservaciones():
     return render_template('reservaciones.html', reservaciones=reservaciones_list)
 
 
+# Página principal
+@app.route('/')
+def index():
+    conn, cursor = get_db_connection()
+    # Obtener datos de usuarios y empleados
+    cursor = conn.cursor()
+
+    # Ejemplo de consulta para obtener usuarios
+    cursor.execute("SELECT * FROM usuarios")
+    usuarios = cursor.fetchall()
+
+    # Ejemplo de consulta para obtener empleados
+    cursor.execute("SELECT * FROM empleados")
+    empleados = cursor.fetchall()
+
+    cursor.close()
+    return render_template('index.html', usuarios=usuarios, empleados=empleados)
+
+# Ruta para insertar usuario
+@app.route('/insertar_usuario', methods=['POST'])
+def insertar_usuario():
+    conn, cursor = get_db_connection()
+    # Obtener datos del formulario
+    id_usuario = request.form['id']
+    nombre = request.form['nombre']
+    apellido = request.form['apellido']
+    correo = request.form['correo']
+    contrasena = request.form['contrasena']
+
+    # Llamar al procedimiento almacenado correspondiente
+    cursor = conn.cursor()
+    cursor.callproc('insertar_usuario', [id_usuario, nombre, apellido, correo, contrasena])
+    cursor.close()
+
+    # Redirigir a la página principal
+    return redirect('/')
+
+# Ruta para insertar empleado
+@app.route('/insertar_empleado', methods=['POST'])
+def insertar_empleado():
+    conn, cursor = get_db_connection()
+    # Obtener datos del formulario
+    id_empleado = request.form['id_empleado']
+    nombre = request.form['nombre']
+    apellido = request.form['apellido']
+    direccion = request.form['direccion']
+    telefono = request.form['telefono']
+    puesto = request.form['puesto']
+    fecha_contratacion = request.form['fecha_contratacion']
+    id_usuario = request.form['id_usuario']
+
+    # Llamar al procedimiento almacenado correspondiente
+    cursor = conn.cursor()
+    cursor.callproc('insertar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
+    cursor.close()
+
+    # Redirigir a la página principal
+    return redirect('/')
+
+# Ruta para actualizar usuario
+
+@app.route('/actualizar_usuario', methods=['POST'])
+def actualizar_usuario():
+    conn, cursor = get_db_connection()
+    # Obtener datos del formulario
+    id_usuario = request.form['id']
+    nombre = request.form['nombre']
+    apellido = request.form['apellido']
+    correo = request.form['correo']
+    contrasena = request.form['contrasena']
+
+    # Llamar al procedimiento almacenado correspondiente
+    cursor = conn.cursor()
+    cursor.callproc('actualizar_usuario', [id_usuario, nombre, apellido, correo, contrasena])
+    cursor.close()
+
+    # Redirigir a la página principal
+    return redirect('/')
+
+# Ruta para actualizar empleado
+@app.route('/actualizar_empleado', methods=['POST'])
+def actualizar_empleado():
+    conn, cursor = get_db_connection()
+    # Obtener datos del formulario
+    id_empleado = request.form['id_empleado']
+    nombre = request.form['nombre']
+    apellido = request.form['apellido']
+    direccion = request.form['direccion']
+    telefono = request.form['telefono']
+    puesto = request.form['puesto']
+    fecha_contratacion = request.form['fecha_contratacion']
+    id_usuario = request.form['id_usuario']
+
+    # Llamar al procedimiento almacenado correspondiente
+    cursor = conn.cursor()
+    cursor.callproc('actualizar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
+    cursor.close()
+
+    # Redirigir a la página principal
+    return redirect('/')
+
+# Ruta para eliminar usuario
+@app.route('/eliminar_usuario/<int:id_usuario>')
+def eliminar_usuario(id_usuario):
+    conn, cursor = get_db_connection()
+    # Llamar al procedimiento almacenado correspondiente
+    cursor = conn.cursor()
+    cursor.callproc('eliminar_usuario', [id_usuario])
+    cursor.close()
+
+    # Redirigir a la página principal
+    return redirect('/')
+
+# Ruta para eliminar empleado
+@app.route('/eliminar_empleado/<int:id_empleado>')
+def eliminar_empleado(id_empleado):
+    conn, cursor = get_db_connection()
+    # Llamar al procedimiento almacenado correspondiente
+    cursor = conn.cursor()
+    cursor.callproc('eliminar_empleado', [id_empleado])
+    cursor.close()
+
+    # Redirigir a la página principal
+    return redirect('/')
+
+
 
 
 # print("************* TEST ---------")
