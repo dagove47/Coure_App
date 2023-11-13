@@ -231,6 +231,44 @@ def eliminar_factura(id_factura):
 
     close_db_connection(conn, cursor)
 
+    #reservaciones
+#@app.route('/reservaciones', methods=['POST'])
+#def reservaciones():
+   # reserva_id = request.form['reserva_id']
+  #  nombre = request.form['nombre']
+ #   fecha = request.form['fecha']
+
+    # Ejecutar un bloque PL/SQL para realizar la reserva en la base de datos
+#    conn, cursor = get_db_connection()
+#    try:
+#        cursor.execute(
+#           """ BEGIN
+#                -- Tu bloque PL/SQL para realizar la reserva
+#                -- Puedes usar las variables :reserva_id, :nombre, :fecha en el bloque PL/SQL
+#            END;
+#        """,# {'reserva_id': reserva_id, 'nombre': nombre, 'fecha': fecha})
+#        conn, cursor = get_db_connection()
+#        mensaje = 'Reserva exitosa'
+#    except cx_Oracle.DatabaseError as e:
+#        error, = e.args
+#        mensaje = f'Error en la reserva: {error.message}'
+
+#    return render_template('reservaciones.html')
+
+@app.route('/reservaciones')
+def reservaciones():
+    conn, cursor = get_db_connection()
+
+    # Obtener la lista de reservaciones desde la base de datos
+    cursor.execute("SELECT * FROM Reservaciones")
+    
+
+    reservaciones_list = cursor.fetchall()  # Obtener la lista de reservaciones
+
+    close_db_connection(conn, cursor)
+
+    return render_template('reservaciones.html', reservaciones=reservaciones_list)
+
 
 
 

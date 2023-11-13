@@ -169,6 +169,26 @@ BEGIN
 END consultar_facturas;
 /
 
+-- Crea una secuencia para generar automáticamente IDs de reserva
+CREATE SEQUENCE reservaciones_seq START WITH 1 INCREMENT BY 1;
+
+-- Crea la tabla de reservaciones
+CREATE TABLE reservaciones (
+    reserva_id NUMBER PRIMARY KEY,
+    nombre VARCHAR2(50) NOT NULL,
+    fecha DATE NOT NULL  
+);
+
+-- Crea un trigger para insertar automáticamente el ID de reserva
+CREATE OR REPLACE TRIGGER tr_reservaciones
+BEFORE INSERT ON reservaciones
+FOR EACH ROW
+BEGIN
+    SELECT reservaciones_seq.NEXTVAL
+    INTO :NEW.reserva_id
+    FROM dual;
+END;
+/
 
 
 
