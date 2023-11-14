@@ -269,7 +269,7 @@ def reservaciones():
 
     return render_template('reservaciones.html', reservaciones=reservaciones_list)
 
-
+"""
 # Página principal
 @app.route('/')
 def index():
@@ -394,8 +394,7 @@ def eliminar_empleado(id_empleado):
 
     # Redirigir a la página principal
     return redirect('/')
-
-
+"""
 
 
 # print("************* TEST ---------")
