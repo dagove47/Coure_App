@@ -194,6 +194,8 @@ def agregar_factura():
 
     return redirect(url_for('facturas'))
 
+    return redirect(url_for('facturas'))
+
 @app.route('/factura/editar/<int:id_factura>')
 def editar_factura(id_factura):
     conn, cursor = get_db_connection()
@@ -230,6 +232,8 @@ def eliminar_factura(id_factura):
     conn.commit()
 
     close_db_connection(conn, cursor)
+
+    return redirect(url_for('facturas'))
 
     #reservaciones
 #@app.route('/reservaciones', methods=['POST'])

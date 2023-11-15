@@ -154,16 +154,24 @@ END consultar_clientes;
 
 -- Facturas
 CREATE OR REPLACE PROCEDURE insertar_nueva_factura (
-    v_id_factura NUMBER,
-    v_fecha_factura DATE,
+    v_fecha_factura VARCHAR2,
     v_id_cliente NUMBER,
     v_total NUMBER
 ) AS
+    fecha_factura DATE;
 BEGIN
-    INSERT INTO Factura VALUES (v_id_factura, v_fecha_factura, v_id_cliente, v_total);
+    -- Convertir la cadena de fecha a un tipo de dato DATE
+    fecha_factura := TO_DATE(v_fecha_factura, 'YYYY-MM-DD');
+
+    -- Insertar la nueva factura en la tabla
+    INSERT INTO Factura VALUES (SEQ_FACTURA.NEXTVAL, fecha_factura, v_id_cliente, v_total);
+    
+    -- Realizar COMMIT para confirmar la transacción
     COMMIT;
 END insertar_nueva_factura;
 /
+SELECT * FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = 'SEQ_FACTURA';
+CREATE SEQUENCE SEQ_FACTURA START WITH 1 INCREMENT BY 1;
 
 -- Actualizar factura
 CREATE OR REPLACE PROCEDURE actualizar_factura(
@@ -177,10 +185,9 @@ END actualizar_factura;
 /
 
 -- Eliminar factura
-CREATE OR REPLACE PROCEDURE eliminar_factura AS
-    v_id_factura NUMBER := 1; -- Asigna el ID de la factura que deseas eliminar
+CREATE OR REPLACE PROCEDURE eliminar_factura(p_id_factura NUMBER) AS
 BEGIN
-    DELETE FROM Factura WHERE id_factura = v_id_factura;
+    DELETE FROM Factura WHERE id_factura = p_id_factura;
     COMMIT;
 END eliminar_factura;
 /
@@ -193,6 +200,8 @@ BEGIN
     END LOOP;
 END consultar_facturas;
 /
+
+
 
 -- Crea una secuencia para generar automáticamente IDs de reserva
 CREATE SEQUENCE reservaciones_seq START WITH 1 INCREMENT BY 1;
