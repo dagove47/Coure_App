@@ -335,3 +335,94 @@ END eliminar_empleado;
 
 
 
+/// Datos de pagos 
+
+CREATE TABLE Pagos (
+    ID_pago NUMBER PRIMARY KEY,
+    id_factura NUMBER REFERENCES Factura(id_factura),
+    metodo_pago VARCHAR2(50),
+    monto_pagado NUMBER,
+    fecha_hora_pago TIMESTAMP
+);
+-- Modificar la definición de la columna fecha_hora_pago
+ALTER TABLE Pagos MODIFY fecha_hora_pago DATE;
+
+-- Actualizar los datos existentes al nuevo formato
+UPDATE Pagos SET fecha_hora_pago = TO_DATE(TO_CHAR(fecha_hora_pago, 'YYYY-MM-DD'), 'YYYY-MM-DD');
+
+
+-- Insertar un pago
+CREATE OR REPLACE PROCEDURE insertar_pago(
+    p_ID_pago IN NUMBER,
+    p_ID_factura IN NUMBER,
+    p_metodo_pago IN VARCHAR2,
+    p_monto_pagado IN NUMBER,
+    p_fecha_hora_pago IN TIMESTAMP
+)
+AS
+BEGIN
+    INSERT INTO Pagos(ID_pago, ID_factura, metodo_pago, monto_pagado, fecha_hora_pago)
+    VALUES (p_ID_pago, p_ID_factura, p_metodo_pago, p_monto_pagado, p_fecha_hora_pago);
+    COMMIT;
+END insertar_pago;
+/
+
+CREATE OR REPLACE PROCEDURE actualizar_pago(
+    p_ID_pago IN NUMBER,
+    p_metodo_pago IN VARCHAR2,
+    p_monto_pagado IN NUMBER,
+    p_fecha_hora_pago_str IN VARCHAR2
+)
+AS
+    v_fecha_hora_pago TIMESTAMP; -- Variable para almacenar la fecha y hora convertidas
+BEGIN
+    -- Intentar convertir la cadena a TIMESTAMP con el formato "YYYY-MM-DDTHH24:MI:SS"
+    BEGIN
+        v_fecha_hora_pago := TO_TIMESTAMP(p_fecha_hora_pago_str, 'YYYY-MM-DD"T"HH24:MI:SS');
+    EXCEPTION
+        WHEN OTHERS THEN
+            -- En caso de error, imprimir la cadena de fecha y hora recibida
+            DBMS_OUTPUT.PUT_LINE('Error al convertir la cadena: ' || p_fecha_hora_pago_str);
+            -- Reraise para propagar la excepción original
+            RAISE;
+    END;
+
+    -- Actualizar el pago
+    UPDATE Pagos
+    SET metodo_pago = p_metodo_pago,
+        monto_pagado = p_monto_pagado,
+        fecha_hora_pago = v_fecha_hora_pago
+    WHERE ID_pago = p_ID_pago;
+
+    COMMIT;
+END actualizar_pago;
+/
+
+DROP PROCEDURE actualizar_pago;
+
+
+-- Eliminar un pago
+CREATE OR REPLACE PROCEDURE eliminar_pago(
+    p_ID_pago IN NUMBER
+)
+AS
+BEGIN
+    DELETE FROM Pagos WHERE ID_pago = p_ID_pago;
+    COMMIT;
+END eliminar_pago;
+/
+
+-- Obtener todos los pagos
+CREATE OR REPLACE FUNCTION obtener_pagos RETURN SYS_REFCURSOR
+AS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+        SELECT * FROM Pagos;
+    RETURN v_cursor;
+END obtener_pagos;
+/
+
+
+
+

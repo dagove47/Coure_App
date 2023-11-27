@@ -1,3 +1,5 @@
+
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from config import DB_CONNECTION_STRING, SECRET_KEY, VAR_ENV_1, VAR_ENV_2, VAR_ENV_3
 import cx_Oracle
@@ -273,132 +275,68 @@ def reservaciones():
 
     return render_template('reservaciones.html', reservaciones=reservaciones_list)
 
-"""
-# Página principal
-@app.route('/')
-def index():
+
+# Pagos
+@app.route('/pagos')
+
+def pagos():
     conn, cursor = get_db_connection()
-    # Obtener datos de usuarios y empleados
-    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Pagos")
+    pagos = cursor.fetchall()
+    return render_template('pagos.html', pagos=pagos)
 
-    # Ejemplo de consulta para obtener usuarios
-    cursor.execute("SELECT * FROM usuarios")
-    usuarios = cursor.fetchall()
 
-    # Ejemplo de consulta para obtener empleados
-    cursor.execute("SELECT * FROM empleados")
-    empleados = cursor.fetchall()
-
-    cursor.close()
-    return render_template('index.html', usuarios=usuarios, empleados=empleados)
-
-# Ruta para insertar usuario
-@app.route('/insertar_usuario', methods=['POST'])
-def insertar_usuario():
+@app.route('/agregar', methods=['POST'])
+def agregar():
     conn, cursor = get_db_connection()
-    # Obtener datos del formulario
-    id_usuario = request.form['id']
-    nombre = request.form['nombre']
-    apellido = request.form['apellido']
-    correo = request.form['correo']
-    contrasena = request.form['contrasena']
+    if request.method == 'POST':
+        id_pago = request.form['id_pago']
+        id_factura = request.form['id_factura']
+        metodo_pago = request.form['metodo_pago']
+        monto_pagado = request.form['monto_pagado']
+        fecha_hora_pago_str = request.form['fecha_hora_pago']
 
-    # Llamar al procedimiento almacenado correspondiente
-    cursor = conn.cursor()
-    cursor.callproc('insertar_usuario', [id_usuario, nombre, apellido, correo, contrasena])
-    cursor.close()
+        # Convertir la cadena de fecha a un objeto datetime de Python
+        fecha_hora_pago = datetime.strptime(fecha_hora_pago_str, '%Y-%m-%dT%H:%M')
 
-    # Redirigir a la página principal
-    return redirect('/')
+        # Llamar al procedimiento almacenado para insertar un pago
+        cursor.callproc("insertar_pago", (id_pago, id_factura, metodo_pago, monto_pagado, fecha_hora_pago))
+        conn.commit()
 
-# Ruta para insertar empleado
-@app.route('/insertar_empleado', methods=['POST'])
-def insertar_empleado():
+    return redirect('/pagos')
+
+
+@app.route('/actualizar', methods=['POST'])
+def actualizar():
     conn, cursor = get_db_connection()
-    # Obtener datos del formulario
-    id_empleado = request.form['id_empleado']
-    nombre = request.form['nombre']
-    apellido = request.form['apellido']
-    direccion = request.form['direccion']
-    telefono = request.form['telefono']
-    puesto = request.form['puesto']
-    fecha_contratacion = request.form['fecha_contratacion']
-    id_usuario = request.form['id_usuario']
+    if request.method == 'POST':
+        id_pago = request.form['id_pago']
+        metodo_pago = request.form['metodo_pago']
+        monto_pagado = float(request.form['monto_pagado']) 
+        fecha_hora_pago = request.form['fecha_hora_pago']
+        
 
-    # Llamar al procedimiento almacenado correspondiente
-    cursor = conn.cursor()
-    cursor.callproc('insertar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
-    cursor.close()
+        # Llamar al procedimiento almacenado para actualizar un pago
+        cursor.callproc("actualizar_pago", (id_pago, metodo_pago, monto_pagado, fecha_hora_pago))
+        conn.commit()
 
-    # Redirigir a la página principal
-    return redirect('/')
+    return redirect('/pagos')
 
-# Ruta para actualizar usuario
-
-@app.route('/actualizar_usuario', methods=['POST'])
-def actualizar_usuario():
+@app.route('/eliminar/<int:id_pago>')
+def eliminar(id_pago):
     conn, cursor = get_db_connection()
-    # Obtener datos del formulario
-    id_usuario = request.form['id']
-    nombre = request.form['nombre']
-    apellido = request.form['apellido']
-    correo = request.form['correo']
-    contrasena = request.form['contrasena']
+    # Llamar al procedimiento almacenado para eliminar un pago
+    cursor.callproc("eliminar_pago", (id_pago,))
+    conn.commit()
 
-    # Llamar al procedimiento almacenado correspondiente
-    cursor = conn.cursor()
-    cursor.callproc('actualizar_usuario', [id_usuario, nombre, apellido, correo, contrasena])
-    cursor.close()
+    return redirect('/pagos')
 
-    # Redirigir a la página principal
-    return redirect('/')
+if __name__ == '__main__':
+    app.run(debug=True)
 
-# Ruta para actualizar empleado
-@app.route('/actualizar_empleado', methods=['POST'])
-def actualizar_empleado():
-    conn, cursor = get_db_connection()
-    # Obtener datos del formulario
-    id_empleado = request.form['id_empleado']
-    nombre = request.form['nombre']
-    apellido = request.form['apellido']
-    direccion = request.form['direccion']
-    telefono = request.form['telefono']
-    puesto = request.form['puesto']
-    fecha_contratacion = request.form['fecha_contratacion']
-    id_usuario = request.form['id_usuario']
 
-    # Llamar al procedimiento almacenado correspondiente
-    cursor = conn.cursor()
-    cursor.callproc('actualizar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
-    cursor.close()
 
-    # Redirigir a la página principal
-    return redirect('/')
 
-# Ruta para eliminar usuario
-@app.route('/eliminar_usuario/<int:id_usuario>')
-def eliminar_usuario(id_usuario):
-    conn, cursor = get_db_connection()
-    # Llamar al procedimiento almacenado correspondiente
-    cursor = conn.cursor()
-    cursor.callproc('eliminar_usuario', [id_usuario])
-    cursor.close()
-
-    # Redirigir a la página principal
-    return redirect('/')
-
-# Ruta para eliminar empleado
-@app.route('/eliminar_empleado/<int:id_empleado>')
-def eliminar_empleado(id_empleado):
-    conn, cursor = get_db_connection()
-    # Llamar al procedimiento almacenado correspondiente
-    cursor = conn.cursor()
-    cursor.callproc('eliminar_empleado', [id_empleado])
-    cursor.close()
-
-    # Redirigir a la página principal
-    return redirect('/')
-"""
 
 
 # print("************* TEST ---------")

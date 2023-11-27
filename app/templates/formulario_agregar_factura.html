@@ -51,8 +51,8 @@
         <h2>Agregar Factura</h2>
         <form method="post" action="{{ url_for('agregar_factura') }}">
             <div class="form-group">
-                <label for="fecha">Fecha:</label>
-                <input type="date" class="form-control" id="fecha" name="fecha" required>
+                <label for="fecha">Fecha (Año-Mes-Día):</label>
+                <input type="text" class="form-control" id="fecha" name="fecha" placeholder="YYYY-MM-DD" required>
             </div>
             <div class="form-group">
                 <label for="id_cliente">ID Cliente:</label>
