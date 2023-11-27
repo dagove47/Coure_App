@@ -335,6 +335,105 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
+# Empleados 
+@app.route('/empleados')
+def mostrar_empleados():
+    conn, cursor = get_db_connection()
+    cursor.execute("SELECT * FROM empleados")
+    empleados = cursor.fetchall()
+    return render_template('empleados.html', empleados=empleados)
+
+@app.route('/crear_empleado', methods=['GET', 'POST'])
+def crear_empleado():
+    conn, cursor = get_db_connection()
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        id_empleado = request.form['id_empleado']
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        direccion = request.form['direccion']
+        telefono = request.form['telefono']
+        puesto = request.form['puesto']
+
+        # Convertir la fecha al formato adecuado
+        fecha_contratacion_str = request.form['fecha_contratacion']
+        fecha_contratacion = datetime.strptime(fecha_contratacion_str, '%Y-%m-%d').date()
+
+        id_usuario = request.form['id_usuario']
+
+        # Ejecutar el procedimiento PL/SQL para crear empleado
+        cursor.callproc('crear_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
+        conn.commit()
+
+        return redirect('/empleados')
+    return render_template('empleados.html')
+
+@app.route('/editar_empleado/<int:id_empleado>', methods=['GET', 'POST'])
+def editar_empleado(id_empleado):
+    conn, cursor = get_db_connection()
+
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        direccion = request.form['direccion']
+        telefono = request.form['telefono']
+        puesto = request.form['puesto']
+        fecha_contratacion = request.form['fecha_contratacion']
+        id_usuario = request.form['id_usuario']
+
+        # Ejecutar el procedimiento PL/SQL para editar empleado
+        cursor.callproc('editar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
+        conn.commit()
+
+        return redirect('/empleados')
+
+    # Obtener los detalles del empleado para mostrar en el formulario
+    cursor.execute("SELECT * FROM empleados WHERE id_empleado = :id", {'id': id_empleado})
+    empleado = cursor.fetchone()
+
+    formatted_fecha_contratacion = datetime.strftime(empleado[6], '%Y-%m-%d')
+
+    return render_template('editar_empleado.html', empleado=empleado)
+
+
+@app.route('/guardar_edicion/<int:id_empleado>', methods=['POST'])
+def guardar_edicion(id_empleado):
+    conn, cursor = get_db_connection()
+
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        direccion = request.form['direccion']
+        telefono = request.form['telefono']
+        puesto = request.form['puesto']
+        fecha_contratacion_str = request.form['fecha_contratacion']
+        fecha_contratacion = datetime.strptime(fecha_contratacion_str, '%Y-%m-%d').date()
+        id_usuario = request.form['id_usuario']
+
+        # Ejecutar el procedimiento PL/SQL para guardar la edición del empleado
+        cursor.callproc('editar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
+        conn.commit()
+
+        return redirect('/empleados')
+
+   
+    return render_template('editar_empleado.html', empleado=empleado)
+
+# Ruta para eliminar un empleado
+@app.route('/eliminar_empleado/<int:id_empleado>')
+def eliminar_empleado(id_empleado):
+    conn, cursor = get_db_connection()
+    cursor.callproc('eliminar_empleado', [id_empleado])
+    conn.commit()
+    return redirect('/empleados')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
 
 
 
