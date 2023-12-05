@@ -413,3 +413,76 @@ INSERT INTO empleados VALUES (3, 'Nombre3', 'Apellido3', 'Direccion3', 'Telefono
 -- Insertar Empleado 4
 INSERT INTO empleados VALUES (4, 'Nombre4', 'Apellido4', 'Direccion4', 'Telefono4', 'Puesto4', TO_DATE('2023-04-01', 'YYYY-MM-DD'), 104);
 
+
+
+---Provedores 
+
+
+CREATE TABLE Proveedor (
+    ID_PROVEEDOR NUMBER PRIMARY KEY,
+    NOMBRE_EMPRESA VARCHAR2(100),
+    NOMBRE_CONTACTO VARCHAR2(100),
+    TELEFONO VARCHAR2(20),
+    CORREO_ELECTRONICO VARCHAR2(100)
+);
+
+
+
+
+
+
+
+---Procedimientos pl/sql 
+
+-- Crear un nuevo proveedor
+CREATE OR REPLACE PROCEDURE CrearProveedor(
+    p_IDProveedor IN NUMBER,
+    p_NombreEmpresa IN VARCHAR2,
+    p_NombreContacto IN VARCHAR2,
+    p_Telefono IN VARCHAR2,
+    p_CorreoElectronico IN VARCHAR2
+) AS
+BEGIN
+    INSERT INTO Proveedor (ID_PROVEEDOR, NOMBRE_EMPRESA, NOMBRE_CONTACTO, TELEFONO, CORREO_ELECTRONICO)
+    VALUES (p_IDProveedor, p_NombreEmpresa, p_NombreContacto, p_Telefono, p_CorreoElectronico);
+    COMMIT;
+END CrearProveedor;
+/
+
+-- Obtener información de un proveedor
+CREATE OR REPLACE FUNCTION ObtenerProveedor(p_IDProveedor IN NUMBER) RETURN Proveedor%ROWTYPE AS
+    v_Proveedor Proveedor%ROWTYPE;
+BEGIN
+    SELECT * INTO v_Proveedor FROM Proveedor WHERE ID_PROVEEDOR = p_IDProveedor;
+    RETURN v_Proveedor;
+END ObtenerProveedor;
+/
+
+-- Actualizar información de un proveedor
+CREATE OR REPLACE PROCEDURE ActualizarProveedor(
+    p_IDProveedor IN NUMBER,
+    p_NuevoNombreEmpresa IN VARCHAR2,
+    p_NuevoNombreContacto IN VARCHAR2,
+    p_NuevoTelefono IN VARCHAR2,
+    p_NuevoCorreoElectronico IN VARCHAR2
+) AS
+BEGIN
+    UPDATE Proveedor
+    SET NOMBRE_EMPRESA = p_NuevoNombreEmpresa,
+        NOMBRE_CONTACTO = p_NuevoNombreContacto,
+        TELEFONO = p_NuevoTelefono,
+        CORREO_ELECTRONICO = p_NuevoCorreoElectronico
+    WHERE ID_PROVEEDOR = p_IDProveedor;
+    COMMIT;
+END ActualizarProveedor;
+/
+
+-- Eliminar un proveedor
+CREATE OR REPLACE PROCEDURE EliminarProveedor(p_IDProveedor IN NUMBER) AS
+BEGIN
+    DELETE FROM Proveedor WHERE ID_PROVEEDOR = p_IDProveedor;
+    COMMIT;
+END EliminarProveedor;
+/
+
+
