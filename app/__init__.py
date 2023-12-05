@@ -435,6 +435,73 @@ if __name__ == '__main__':
 
 
 
+    
+
+# Listar proveedores
+@app.route('/proveedores')
+
+def listar_proveedores():
+    conn, cursor = get_db_connection()
+
+    try:
+        cursor.execute("SELECT * FROM Proveedor")
+        proveedores = cursor.fetchall()
+        return render_template('proveedores.html', proveedores=proveedores)
+    finally:
+        # Asegúrate de cerrar la conexión en el bloque finally
+        cursor.close()
+        conn.close()
+
+# Crear proveedor
+@app.route('/crear', methods=['POST'])
+def crear_proveedor():
+    if request.method == 'POST':
+        conn, cursor = get_db_connection()
+        # Obtener datos del formulario
+        id_proveedor = request.form['id_proveedor']
+        nombre_empresa = request.form['nombre_empresa']
+        nombre_contacto = request.form['nombre_contacto']
+        telefono = request.form['telefono']
+        correo_electronico = request.form['correo_electronico']
+
+        # Llamar al procedimiento PL/SQL para crear un proveedor
+        cursor.callproc('CrearProveedor', [id_proveedor, nombre_empresa, nombre_contacto, telefono, correo_electronico])
+        conn.commit()
+
+    return redirect(url_for('listar_proveedores'))
+
+# Actualizar proveedor
+@app.route('/actualizar/<int:id_proveedor>', methods=['POST'])
+def actualizar_proveedor(id_proveedor):
+    conn, cursor = get_db_connection()
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        nuevo_nombre_empresa = request.form['nuevo_nombre_empresa']
+        nuevo_nombre_contacto = request.form['nuevo_nombre_contacto']
+        nuevo_telefono = request.form['nuevo_telefono']
+        nuevo_correo_electronico = request.form['nuevo_correo_electronico']
+
+        # Llamar al procedimiento PL/SQL para actualizar un proveedor
+        cursor.callproc('ActualizarProveedor', [id_proveedor, nuevo_nombre_empresa, nuevo_nombre_contacto, nuevo_telefono, nuevo_correo_electronico])
+        conn.commit()
+
+    return redirect(url_for('listar_proveedores'))
+
+# Eliminar proveedor
+@app.route('/eliminar_proveedor/<int:id_proveedor>')
+def eliminar_proveedor(id_proveedor):
+    conn, cursor = get_db_connection()
+    # Llamar al procedimiento PL/SQL para eliminar un proveedor
+    cursor.callproc('EliminarProveedor', [id_proveedor])
+    conn.commit()
+
+    return redirect(url_for('listar_proveedores'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
 
 
 
@@ -462,3 +529,6 @@ if __name__ == '__main__':
 # @app.route('/signin')
 # def signin():
 #     return render_template('signin.html')
+
+
+
