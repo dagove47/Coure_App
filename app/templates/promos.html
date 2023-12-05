@@ -76,113 +76,28 @@
               Desde exquisitos platos principales hasta tentadores postres, hemos preparado algo especial para satisfacer todos los gustos.</p>
           </div>
         </div>
+
+        
+        <!-- fetch all information from server -->
+
         <div class="row d-flex">
+          {% for promo in promociones %}
           <div class="col-md-4 d-flex ftco-animate">
           	<div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('../static/assets/images/image_1.jpg');">
-              </a>
+              <img src="data:image/png;base64,{{ promo[4] }}" class="cblock-20" alt="archivo">
+                
               <div class="text py-4 d-block">
-              	<div class="meta">
-                  <div><a href="#">Sept 10, 2018</a></div>
-                  <div><a href="#">Admin</a></div>
-                  <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
-                </div>
-                <h3 class="heading mt-2"><a href="#">The Delicious Pizza</a></h3>
-                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+                <h6><a href="#">{{ promo[1] }}</a></h6>
+                <p>{{ promo[2] }}</p>
+                <p class="card-text"><small class="text-muted">{{ promo[3] }}</small></p>
+                
               </div>
             </div>
           </div>
-          <div class="col-md-4 d-flex ftco-animate">
-          	<div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('../static/assets/images/image_2.jpg');">
-              </a>
-              <div class="text py-4 d-block">
-              	<div class="meta">
-                  <div><a href="#">Sept 10, 2018</a></div>
-                  <div><a href="#">Admin</a></div>
-                  <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
-                </div>
-                <h3 class="heading mt-2"><a href="#">The Delicious Pizza</a></h3>
-                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 d-flex ftco-animate">
-          	<div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('../static/assets/images/image_3.jpg');">
-              </a>
-              <div class="text py-4 d-block">
-              	<div class="meta">
-                  <div><a href="#">Sept 10, 2018</a></div>
-                  <div><a href="#">Admin</a></div>
-                  <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
-                </div>
-                <h3 class="heading mt-2"><a href="#">The Delicious Pizza</a></h3>
-                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 d-flex ftco-animate">
-          	<div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('../static/assets/images/image_4.jpg');">
-              </a>
-              <div class="text py-4 d-block">
-              	<div class="meta">
-                  <div><a href="#">Sept 10, 2018</a></div>
-                  <div><a href="#">Admin</a></div>
-                  <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
-                </div>
-                <h3 class="heading mt-2"><a href="#">The Delicious Pizza</a></h3>
-                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 d-flex ftco-animate">
-          	<div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('../static/assets/images/image_5.jpg');">
-              </a>
-              <div class="text py-4 d-block">
-              	<div class="meta">
-                  <div><a href="#">Sept 10, 2018</a></div>
-                  <div><a href="#">Admin</a></div>
-                  <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
-                </div>
-                <h3 class="heading mt-2"><a href="#">The Delicious Pizza</a></h3>
-                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 d-flex ftco-animate">
-          	<div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('../static/assets/images/image_6.jpg');">
-              </a>
-              <div class="text py-4 d-block">
-              	<div class="meta">
-                  <div><a href="#">Sept 10, 2018</a></div>
-                  <div><a href="#">Admin</a></div>
-                  <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
-                </div>
-                <h3 class="heading mt-2"><a href="#">The Delicious Pizza</a></h3>
-                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-              </div>
-            </div>
-          </div>
+          {% endfor %}
         </div>
-        <div class="row mt-5">
-          <div class="col text-center">
-            <div class="block-27">
-              <ul>
-                <li><a href="#">&lt;</a></li>
-                <li class="active"><span>1</span></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li><a href="#">&gt;</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
+
+
       </div>
     </section>
 

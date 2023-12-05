@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from config import DB_CONNECTION_STRING, SECRET_KEY, VAR_ENV_1, VAR_ENV_2, VAR_ENV_3
 import cx_Oracle
+import base64
 
 
 app = Flask(__name__)
@@ -124,7 +125,7 @@ def role_required(required_role):
                 return func(*args, **kwargs)
             else:
                 flash('You do not have the required permissions to access this page.', 'danger')
-                return redirect(url_for('/'))
+                return redirect('/')
         return decorated_function
     return decorator
 
@@ -148,15 +149,9 @@ def admin():
     else:
         abort(404)
 
-#PROMOS
-@app.route('/promos')
-@role_required(required_role=2)
-def promo():
-    if 'user_id' in session:
-        return render_template('promos.html')
-    else:
-        abort(404)
 
+
+#LOGOUT
 
 @app.route('/logout')
 def logout():
@@ -414,12 +409,13 @@ def guardar_edicion(id_empleado):
 
         # Ejecutar el procedimiento PL/SQL para guardar la edición del empleado
         cursor.callproc('editar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
+        empleado = cursor.fetchone()
         conn.commit()
 
         return redirect('/empleados')
 
    
-    return render_template('editar_empleado.html', empleado=empleado)
+    return render_template('editar_empleado.html' , empleado=empleado)
 
 # Ruta para eliminar un empleado
 @app.route('/eliminar_empleado/<int:id_empleado>')
@@ -433,6 +429,17 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
+#***************************PROMOS******************************
+
+#PROMOS PERMISOS | ROLES
+
+#@app.route('/promos')
+#@role_required(required_role=2)
+#def promo():
+#    if 'user_id' in session:
+#        return render_template('promos.html')
+#    else:
+#        abort(404)
 
 
     
@@ -504,6 +511,123 @@ if __name__ == '__main__':
 
 
 
+
+#Formulario Promociones
+@app.route('/admin/agregarPromo' ,methods = ['GET', 'POST'])
+@role_required(required_role=1)
+def file_upload ():
+    conn, cursor = get_db_connection()
+    
+
+    if request.method == 'POST':
+        id = request.form ['id']
+        titulo = request.form ['titulo']
+        descripcion = request.form ['descripcion']
+        fecha = request.form ['fecha']
+        archivo = request.files['archivo'].read()
+
+        if conn and cursor:
+            try: 
+                cursor.execute("INSERT INTO Promociones (id,titulo, descripcion, fecha, archivo)VALUES (:id, :titulo, :descripcion, :fecha, :archivo)",
+                   {"id":id,"titulo":titulo, "descripcion":descripcion,"fecha":fecha, "archivo":archivo })
+                conn.commit()
+                return redirect('/admin')
+            except Exception as e:
+                conn.rollback()
+                error = "Failed to add promo"
+                return render_template('promoForm.html', error = error)
+            finally:
+                close_db_connection(conn,cursor)
+    return render_template('promoForm.html')
+
+@app.route('/admin/promociones')
+def mostrarpro():
+    conn, cursor = get_db_connection()
+
+    if conn and cursor:
+        try:
+            # Obtener datos de promociones desde la base de datos
+            cursor.execute("SELECT * FROM Promociones")
+            promociones = cursor.fetchall()
+            
+            for i in range(len(promociones)):
+                promo_data = list(promociones[i])
+                promo_data[4] = base64.b64encode(promo_data[4].read()).decode('utf-8')
+                promociones[i] = promo_data
+
+            # Renderizar la plantilla con los datos
+            return render_template('promociones.html', promociones=promociones)
+        except Exception as e:
+            # Manejar errores si es necesario
+            error = "Failed to fetch promotions"
+            return render_template('promociones.html', error=error)
+        finally:
+            close_db_connection(conn, cursor)
+
+    return render_template('promociones.html')
+
+
+@app.route('/promos')
+def mostrarprou():
+    conn, cursor = get_db_connection()
+
+    if conn and cursor:
+        try:
+            # Obtener datos de promociones desde la base de datos
+            cursor.execute("SELECT * FROM Promociones")
+            promociones = cursor.fetchall()
+            
+            for i in range(len(promociones)):
+                promo_data = list(promociones[i])
+                promo_data[4] = base64.b64encode(promo_data[4].read()).decode('utf-8')
+                promociones[i] = promo_data
+
+            # Renderizar la plantilla con los datos
+            return render_template('promos.html', promociones=promociones)
+        except Exception as e:
+            # Manejar errores si es necesario
+            error = "Failed to fetch promotions"
+            return render_template('promos.html', error=error)
+        finally:
+            close_db_connection(conn, cursor)
+
+    return render_template('promos.html')
+
+
+@app.route('/eliminar_promo/<string:id>')
+def eliminar_promo(id):
+    conn, cursor = get_db_connection()
+    cursor.callproc('eliminar_promo', [id])
+    conn.commit()
+    return redirect('/admin/promociones')
+
+
+@app.route('/editarpromo/<string:id>', methods=['GET', 'POST'])
+def editarpromo(id):
+    conn, cursor = get_db_connection()
+
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        id = request.form['id']
+        titulo = request.form['titulo']
+        descripcion = request.form['descripcion']
+        fecha = request.form['fecha']
+        archivo = request.files['archivo'].read()
+
+        # Ejecutar el procedimiento PL/SQL para editar 
+        cursor.callproc('editar_promo', [id, titulo, descripcion, fecha, archivo])
+        conn.commit()
+
+        return redirect('/admin/promociones')
+
+    # Obtener los detalles del empleado para mostrar en el formulario
+    cursor.execute("SELECT * FROM promociones WHERE id = :id", {'id': id})
+    promociones = cursor.fetchone()
+
+
+    return render_template('editarpromo.html', promociones=promociones)
+
+#*************************** END PROMOS******************************
 
 # print("************* TEST ---------")
 
