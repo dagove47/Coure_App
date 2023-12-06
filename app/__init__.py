@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, a
 from config import DB_CONNECTION_STRING, SECRET_KEY, VAR_ENV_1, VAR_ENV_2, VAR_ENV_3
 import cx_Oracle
 import base64
+import pdb
 
 
 app = Flask(__name__)
@@ -628,6 +629,54 @@ def editarpromo(id):
     return render_template('editarpromo.html', promociones=promociones)
 
 #*************************** END PROMOS******************************
+
+#************************** INGREDIENTES ****************************
+
+@app.route('/ingredientes')
+@role_required(required_role=1)
+def ingredientes():
+    if 'user_id' in session:
+        return render_template('/ingredientes/ingredientes.html')
+    else:
+        abort(404)
+
+
+
+@app.route('/admin/addingrediente' ,methods = ['GET', 'POST'])
+@role_required(required_role=1)
+def agregar_ingre ():
+    conn, cursor = get_db_connection()
+
+     #obtener la lista de proveedores
+    cursor.execute ("SELECT * from proveedor")
+    proveedores = cursor.fetchall()
+    
+
+    if request.method == 'POST':
+        id_in = request.form['id_in']
+        nombre_in = request.form['nombre']
+        proveedor = request.form['proveedor']
+        precio = request.form['precio']
+       
+
+        if conn and cursor:
+            try: 
+                #pdb.set_trace()
+                #llamar SP
+                
+                cursor.callproc("INSERT_INGREDIENTE", [id_in, nombre_in,proveedor, precio])
+                conn.commit()
+                return redirect('/admin')
+            except Exception as e:
+                conn.rollback()
+                error = "Failed to add ingrediente"
+                print(f"Error: {e}")
+                return render_template('/ingredientes/ingreform.html', error = error, proveedores= proveedores)
+            finally:
+                close_db_connection(conn,cursor)
+    return render_template('/ingredientes/ingreform.html', proveedores= proveedores)
+
+#************************* END INGREDIENTES *************************
 
 # print("************* TEST ---------")
 
