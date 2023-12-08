@@ -1,10 +1,6 @@
-
-from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from config import DB_CONNECTION_STRING, SECRET_KEY, VAR_ENV_1, VAR_ENV_2, VAR_ENV_3
 import cx_Oracle
-import base64
-import pdb
 
 
 app = Flask(__name__)
@@ -126,7 +122,7 @@ def role_required(required_role):
                 return func(*args, **kwargs)
             else:
                 flash('You do not have the required permissions to access this page.', 'danger')
-                return redirect('/')
+                return redirect(url_for('/'))
         return decorated_function
     return decorator
 
@@ -150,9 +146,15 @@ def admin():
     else:
         abort(404)
 
+#PROMOS
+@app.route('/promos')
+@role_required(required_role=2)
+def promo():
+    if 'user_id' in session:
+        return render_template('promos.html')
+    else:
+        abort(404)
 
-
-#LOGOUT
 
 @app.route('/logout')
 def logout():
@@ -189,8 +191,6 @@ def agregar_factura():
         conn.commit()
 
     close_db_connection(conn, cursor)
-
-    return redirect(url_for('facturas'))
 
     return redirect(url_for('facturas'))
 
@@ -231,279 +231,108 @@ def eliminar_factura(id_factura):
 
     close_db_connection(conn, cursor)
 
-    return redirect(url_for('facturas'))
+    #platillos
 
-    #reservaciones
-#@app.route('/reservaciones', methods=['POST'])
-#def reservaciones():
-   # reserva_id = request.form['reserva_id']
-  #  nombre = request.form['nombre']
- #   fecha = request.form['fecha']
-
-    # Ejecutar un bloque PL/SQL para realizar la reserva en la base de datos
-#    conn, cursor = get_db_connection()
-#    try:
-#        cursor.execute(
-#           """ BEGIN
-#                -- Tu bloque PL/SQL para realizar la reserva
-#                -- Puedes usar las variables :reserva_id, :nombre, :fecha en el bloque PL/SQL
-#            END;
-#        """,# {'reserva_id': reserva_id, 'nombre': nombre, 'fecha': fecha})
-#        conn, cursor = get_db_connection()
-#        mensaje = 'Reserva exitosa'
-#    except cx_Oracle.DatabaseError as e:
-#        error, = e.args
-#        mensaje = f'Error en la reserva: {error.message}'
-
-#    return render_template('reservaciones.html')
-
-@app.route('/reservaciones')
-def reservaciones():
+@app.route('/platillos')
+def listar_platillos():
     conn, cursor = get_db_connection()
+    cursor.execute("SELECT * FROM Platillos")
+    platillos = cursor.fetchall()
+    close_db_connection(conn, cursor)
+    return render_template('platillos.html', platillos=platillos)
 
-    # Obtener la lista de reservaciones desde la base de datos
-    cursor.execute("SELECT * FROM Reservaciones")
-    
+@app.route('/platillo/agregar', methods=['POST'])
+def agregar_platillo():
+    conn, cursor = get_db_connection()
+    if request.method == 'POST':
+        id_platillo = request.form['id_platillo']
+        nombre = request.form['nombre']
+        descripcion = request.form['descripcion']
+        precio = request.form['precio']
+        tipo_platillo = request.form['tipo_platillo']
 
-    reservaciones_list = cursor.fetchall()  # Obtener la lista de reservaciones
+        cursor.callproc("InsertarPlatillo", [id_platillo, nombre, descripcion, precio, tipo_platillo])
+        conn.commit()
 
     close_db_connection(conn, cursor)
+    return redirect(url_for('listar_platillos'))
 
-    return render_template('reservaciones.html', reservaciones=reservaciones_list)
-
-
-# Pagos
-@app.route('/pagos')
-
-def pagos():
+@app.route('/platillo/editar/<int:id_platillo>', methods=['GET', 'POST'])
+def editar_platillo(id_platillo):
     conn, cursor = get_db_connection()
-    cursor.execute("SELECT * FROM Pagos")
-    pagos = cursor.fetchall()
-    return render_template('pagos.html', pagos=pagos)
+    cursor.execute("SELECT * FROM Platillos WHERE IDPlatillo = :id", {'id': id_platillo})
+    platillo = cursor.fetchone()
 
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        descripcion = request.form['descripcion']
+        precio = request.form['precio']
+        tipo_platillo = request.form['tipo_platillo']
+
+        cursor.callproc("ActualizarPlatillo", [id_platillo, nombre, descripcion, precio, tipo_platillo])
+        conn.commit()
+
+        close_db_connection(conn, cursor)
+        return redirect(url_for('listar_platillos'))
+
+    close_db_connection(conn, cursor)
+    return render_template('platillos.html', platillos=[platillo])
+
+@app.route('/platillo/eliminar/<int:id_platillo>')
+def eliminar_platillo(id_platillo):
+    conn, cursor = get_db_connection()
+    cursor.callproc("EliminarPlatillo", [id_platillo])
+    conn.commit()
+
+    close_db_connection(conn, cursor)
+    return redirect(url_for('listar_platillos'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+    #categoria platillos
+
+@app.route('/categorias_platillos')
+def categorias():
+    conn, cursor = get_db_connection()
+    cursor.execute('SELECT * FROM categoria_platillos')
+    categorias = cursor.fetchall()
+    close_db_connection(conn, cursor)
+    return render_template('categorias_platillos.html', categorias=categorias)
 
 @app.route('/agregar', methods=['POST'])
-def agregar():
+def agregar_categoria():
     conn, cursor = get_db_connection()
     if request.method == 'POST':
-        id_pago = request.form['id_pago']
-        id_factura = request.form['id_factura']
-        metodo_pago = request.form['metodo_pago']
-        monto_pagado = request.form['monto_pagado']
-        fecha_hora_pago_str = request.form['fecha_hora_pago']
-
-        # Convertir la cadena de fecha a un objeto datetime de Python
-        fecha_hora_pago = datetime.strptime(fecha_hora_pago_str, '%Y-%m-%dT%H:%M')
-
-        # Llamar al procedimiento almacenado para insertar un pago
-        cursor.callproc("insertar_pago", (id_pago, id_factura, metodo_pago, monto_pagado, fecha_hora_pago))
+        p_id_categoria = int(request.form['id_categoria'])
+        p_nombre_categoria = request.form['nombre_categoria']
+        cursor.callproc('insertar_categoria', (p_id_categoria, p_nombre_categoria))
         conn.commit()
+        close_db_connection(conn, cursor)
+    return redirect(url_for('categorias_platillos.html'))
 
-    return redirect('/pagos')
-
-
-@app.route('/actualizar', methods=['POST'])
-def actualizar():
+@app.route('/editar/<int:id_categoria>', methods=['GET', 'POST'])
+def editar_categoria(id_categoria):
     conn, cursor = get_db_connection()
-    if request.method == 'POST':
-        id_pago = request.form['id_pago']
-        metodo_pago = request.form['metodo_pago']
-        monto_pagado = float(request.form['monto_pagado']) 
-        fecha_hora_pago = request.form['fecha_hora_pago']
-        
-
-        # Llamar al procedimiento almacenado para actualizar un pago
-        cursor.callproc("actualizar_pago", (id_pago, metodo_pago, monto_pagado, fecha_hora_pago))
+    if request.method == 'GET':
+        cursor.execute('SELECT * FROM categoria_platillos WHERE id_categoria = :id', {'id': id_categoria})
+        categoria = cursor.fetchone()
+        return render_template('editar_categoria.html', categoria=categoria)
+    elif request.method == 'POST':
+        p_nuevo_nombre_categoria = request.form['nuevo_nombre_categoria']
+        cursor.callproc('actualizar_categoria', (id_categoria, p_nuevo_nombre_categoria))
         conn.commit()
+        close_db_connection(conn, cursor)
+        return redirect(url_for('categorias_platillos.html'))
 
-    return redirect('/pagos')
-
-@app.route('/eliminar/<int:id_pago>')
-def eliminar(id_pago):
+@app.route('/eliminar/<int:id_categoria>')
+def eliminar_categoria(id_categoria):
     conn, cursor = get_db_connection()
-    # Llamar al procedimiento almacenado para eliminar un pago
-    cursor.callproc("eliminar_pago", (id_pago,))
+    cursor.callproc('eliminar_categoria', (id_categoria,))
     conn.commit()
-
-    return redirect('/pagos')
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
-# Empleados 
-@app.route('/empleados')
-def mostrar_empleados():
-    conn, cursor = get_db_connection()
-    cursor.execute("SELECT * FROM empleados")
-    empleados = cursor.fetchall()
-    return render_template('empleados.html', empleados=empleados)
-
-@app.route('/crear_empleado', methods=['GET', 'POST'])
-def crear_empleado():
-    conn, cursor = get_db_connection()
-    if request.method == 'POST':
-        # Obtener datos del formulario
-        id_empleado = request.form['id_empleado']
-        nombre = request.form['nombre']
-        apellido = request.form['apellido']
-        direccion = request.form['direccion']
-        telefono = request.form['telefono']
-        puesto = request.form['puesto']
-
-        # Convertir la fecha al formato adecuado
-        fecha_contratacion_str = request.form['fecha_contratacion']
-        fecha_contratacion = datetime.strptime(fecha_contratacion_str, '%Y-%m-%d').date()
-
-        id_usuario = request.form['id_usuario']
-
-        # Ejecutar el procedimiento PL/SQL para crear empleado
-        cursor.callproc('crear_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
-        conn.commit()
-
-        return redirect('/empleados')
-    return render_template('empleados.html')
-
-@app.route('/editar_empleado/<int:id_empleado>', methods=['GET', 'POST'])
-def editar_empleado(id_empleado):
-    conn, cursor = get_db_connection()
-
-    if request.method == 'POST':
-        # Obtener datos del formulario
-        nombre = request.form['nombre']
-        apellido = request.form['apellido']
-        direccion = request.form['direccion']
-        telefono = request.form['telefono']
-        puesto = request.form['puesto']
-        fecha_contratacion = request.form['fecha_contratacion']
-        id_usuario = request.form['id_usuario']
-
-        # Ejecutar el procedimiento PL/SQL para editar empleado
-        cursor.callproc('editar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
-        conn.commit()
-
-        return redirect('/empleados')
-
-    # Obtener los detalles del empleado para mostrar en el formulario
-    cursor.execute("SELECT * FROM empleados WHERE id_empleado = :id", {'id': id_empleado})
-    empleado = cursor.fetchone()
-
-    formatted_fecha_contratacion = datetime.strftime(empleado[6], '%Y-%m-%d')
-
-    return render_template('editar_empleado.html', empleado=empleado)
-
-
-@app.route('/guardar_edicion/<int:id_empleado>', methods=['POST'])
-def guardar_edicion(id_empleado):
-    conn, cursor = get_db_connection()
-
-    if request.method == 'POST':
-        # Obtener datos del formulario
-        nombre = request.form['nombre']
-        apellido = request.form['apellido']
-        direccion = request.form['direccion']
-        telefono = request.form['telefono']
-        puesto = request.form['puesto']
-        fecha_contratacion_str = request.form['fecha_contratacion']
-        fecha_contratacion = datetime.strptime(fecha_contratacion_str, '%Y-%m-%d').date()
-        id_usuario = request.form['id_usuario']
-
-        # Ejecutar el procedimiento PL/SQL para guardar la edición del empleado
-        cursor.callproc('editar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
-        empleado = cursor.fetchone()
-        conn.commit()
-
-        return redirect('/empleados')
-
-   
-    return render_template('editar_empleado.html' , empleado=empleado)
-
-# Ruta para eliminar un empleado
-@app.route('/eliminar_empleado/<int:id_empleado>')
-def eliminar_empleado(id_empleado):
-    conn, cursor = get_db_connection()
-    cursor.callproc('eliminar_empleado', [id_empleado])
-    conn.commit()
-    return redirect('/empleados')
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
-#***************************PROMOS******************************
-
-#PROMOS PERMISOS | ROLES
-
-#@app.route('/promos')
-#@role_required(required_role=2)
-#def promo():
-#    if 'user_id' in session:
-#        return render_template('promos.html')
-#    else:
-#        abort(404)
-
-
-    
-
-# Listar proveedores
-@app.route('/proveedores')
-
-def listar_proveedores():
-    conn, cursor = get_db_connection()
-
-    try:
-        cursor.execute("SELECT * FROM Proveedor")
-        proveedores = cursor.fetchall()
-        return render_template('proveedores.html', proveedores=proveedores)
-    finally:
-        # Asegúrate de cerrar la conexión en el bloque finally
-        cursor.close()
-        conn.close()
-
-# Crear proveedor
-@app.route('/crear', methods=['POST'])
-def crear_proveedor():
-    if request.method == 'POST':
-        conn, cursor = get_db_connection()
-        # Obtener datos del formulario
-        id_proveedor = request.form['id_proveedor']
-        nombre_empresa = request.form['nombre_empresa']
-        nombre_contacto = request.form['nombre_contacto']
-        telefono = request.form['telefono']
-        correo_electronico = request.form['correo_electronico']
-
-        # Llamar al procedimiento PL/SQL para crear un proveedor
-        cursor.callproc('CrearProveedor', [id_proveedor, nombre_empresa, nombre_contacto, telefono, correo_electronico])
-        conn.commit()
-
-    return redirect(url_for('listar_proveedores'))
-
-# Actualizar proveedor
-@app.route('/actualizar/<int:id_proveedor>', methods=['POST'])
-def actualizar_proveedor(id_proveedor):
-    conn, cursor = get_db_connection()
-    if request.method == 'POST':
-        # Obtener datos del formulario
-        nuevo_nombre_empresa = request.form['nuevo_nombre_empresa']
-        nuevo_nombre_contacto = request.form['nuevo_nombre_contacto']
-        nuevo_telefono = request.form['nuevo_telefono']
-        nuevo_correo_electronico = request.form['nuevo_correo_electronico']
-
-        # Llamar al procedimiento PL/SQL para actualizar un proveedor
-        cursor.callproc('ActualizarProveedor', [id_proveedor, nuevo_nombre_empresa, nuevo_nombre_contacto, nuevo_telefono, nuevo_correo_electronico])
-        conn.commit()
-
-    return redirect(url_for('listar_proveedores'))
-
-# Eliminar proveedor
-@app.route('/eliminar_proveedor/<int:id_proveedor>')
-def eliminar_proveedor(id_proveedor):
-    conn, cursor = get_db_connection()
-    # Llamar al procedimiento PL/SQL para eliminar un proveedor
-    cursor.callproc('EliminarProveedor', [id_proveedor])
-    conn.commit()
-
-    return redirect(url_for('listar_proveedores'))
+    close_db_connection(conn, cursor)
+    return redirect(url_for('categorias_platillos'))
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -512,171 +341,6 @@ if __name__ == '__main__':
 
 
 
-
-#Formulario Promociones
-@app.route('/admin/agregarPromo' ,methods = ['GET', 'POST'])
-@role_required(required_role=1)
-def file_upload ():
-    conn, cursor = get_db_connection()
-    
-
-    if request.method == 'POST':
-        id = request.form ['id']
-        titulo = request.form ['titulo']
-        descripcion = request.form ['descripcion']
-        fecha = request.form ['fecha']
-        archivo = request.files['archivo'].read()
-
-        if conn and cursor:
-            try: 
-                cursor.execute("INSERT INTO Promociones (id,titulo, descripcion, fecha, archivo)VALUES (:id, :titulo, :descripcion, :fecha, :archivo)",
-                   {"id":id,"titulo":titulo, "descripcion":descripcion,"fecha":fecha, "archivo":archivo })
-                conn.commit()
-                return redirect('/admin')
-            except Exception as e:
-                conn.rollback()
-                error = "Failed to add promo"
-                return render_template('promoForm.html', error = error)
-            finally:
-                close_db_connection(conn,cursor)
-    return render_template('promoForm.html')
-
-@app.route('/admin/promociones')
-def mostrarpro():
-    conn, cursor = get_db_connection()
-
-    if conn and cursor:
-        try:
-            # Obtener datos de promociones desde la base de datos
-            cursor.execute("SELECT * FROM Promociones")
-            promociones = cursor.fetchall()
-            
-            for i in range(len(promociones)):
-                promo_data = list(promociones[i])
-                promo_data[4] = base64.b64encode(promo_data[4].read()).decode('utf-8')
-                promociones[i] = promo_data
-
-            # Renderizar la plantilla con los datos
-            return render_template('promociones.html', promociones=promociones)
-        except Exception as e:
-            # Manejar errores si es necesario
-            error = "Failed to fetch promotions"
-            return render_template('promociones.html', error=error)
-        finally:
-            close_db_connection(conn, cursor)
-
-    return render_template('promociones.html')
-
-
-@app.route('/promos')
-def mostrarprou():
-    conn, cursor = get_db_connection()
-
-    if conn and cursor:
-        try:
-            # Obtener datos de promociones desde la base de datos
-            cursor.execute("SELECT * FROM Promociones")
-            promociones = cursor.fetchall()
-            
-            for i in range(len(promociones)):
-                promo_data = list(promociones[i])
-                promo_data[4] = base64.b64encode(promo_data[4].read()).decode('utf-8')
-                promociones[i] = promo_data
-
-            # Renderizar la plantilla con los datos
-            return render_template('promos.html', promociones=promociones)
-        except Exception as e:
-            # Manejar errores si es necesario
-            error = "Failed to fetch promotions"
-            return render_template('promos.html', error=error)
-        finally:
-            close_db_connection(conn, cursor)
-
-    return render_template('promos.html')
-
-
-@app.route('/eliminar_promo/<string:id>')
-def eliminar_promo(id):
-    conn, cursor = get_db_connection()
-    cursor.callproc('eliminar_promo', [id])
-    conn.commit()
-    return redirect('/admin/promociones')
-
-
-@app.route('/editarpromo/<string:id>', methods=['GET', 'POST'])
-def editarpromo(id):
-    conn, cursor = get_db_connection()
-
-    if request.method == 'POST':
-        # Obtener datos del formulario
-        id = request.form['id']
-        titulo = request.form['titulo']
-        descripcion = request.form['descripcion']
-        fecha = request.form['fecha']
-        archivo = request.files['archivo'].read()
-
-        # Ejecutar el procedimiento PL/SQL para editar 
-        cursor.callproc('editar_promo', [id, titulo, descripcion, fecha, archivo])
-        conn.commit()
-
-        return redirect('/admin/promociones')
-
-    # Obtener los detalles del empleado para mostrar en el formulario
-    cursor.execute("SELECT * FROM promociones WHERE id = :id", {'id': id})
-    promociones = cursor.fetchone()
-
-
-    return render_template('editarpromo.html', promociones=promociones)
-
-#*************************** END PROMOS******************************
-
-#************************** INGREDIENTES ****************************
-
-@app.route('/ingredientes')
-@role_required(required_role=1)
-def ingredientes():
-    if 'user_id' in session:
-        return render_template('/ingredientes/ingredientes.html')
-    else:
-        abort(404)
-
-
-
-@app.route('/admin/addingrediente' ,methods = ['GET', 'POST'])
-@role_required(required_role=1)
-def agregar_ingre ():
-    conn, cursor = get_db_connection()
-
-     #obtener la lista de proveedores
-    cursor.execute ("SELECT * from proveedor")
-    proveedores = cursor.fetchall()
-    
-
-    if request.method == 'POST':
-        id_in = request.form['id_in']
-        nombre_in = request.form['nombre']
-        proveedor = request.form['proveedor']
-        precio = request.form['precio']
-       
-
-        if conn and cursor:
-            try: 
-                #pdb.set_trace()
-                #llamar SP
-                
-                cursor.callproc("INSERT_INGREDIENTE", [id_in, nombre_in,proveedor, precio])
-                conn.commit()
-                return redirect('/admin')
-            except Exception as e:
-                conn.rollback()
-                error = "Failed to add ingrediente"
-                print(f"Error: {e}")
-                return render_template('/ingredientes/ingreform.html', error = error, proveedores= proveedores)
-            finally:
-                close_db_connection(conn,cursor)
-    return render_template('/ingredientes/ingreform.html', proveedores= proveedores)
-
-#************************* END INGREDIENTES *************************
 
 # print("************* TEST ---------")
 
@@ -702,6 +366,3 @@ def agregar_ingre ():
 # @app.route('/signin')
 # def signin():
 #     return render_template('signin.html')
-
-
-
