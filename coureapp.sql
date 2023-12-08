@@ -191,27 +191,6 @@ END consultar_facturas;
 
 
 
--- Crea una secuencia para generar automáticamente IDs de reserva
-CREATE SEQUENCE reservaciones_seq START WITH 1 INCREMENT BY 1;
-
--- Crea la tabla de reservaciones
-CREATE TABLE reservaciones (
-    reserva_id NUMBER PRIMARY KEY,
-    nombre VARCHAR2(50) NOT NULL,
-    fecha DATE NOT NULL  
-);
-
--- Crea un trigger para insertar automáticamente el ID de reserva
-CREATE OR REPLACE TRIGGER tr_reservaciones
-BEFORE INSERT ON reservaciones
-FOR EACH ROW
-BEGIN
-    SELECT reservaciones_seq.NEXTVAL
-    INTO :NEW.reserva_id
-    FROM dual;
-END;
-/
-
 /// Datos de pagos 
 
 CREATE TABLE Pagos (
@@ -485,4 +464,134 @@ BEGIN
 END EliminarProveedor;
 /
 
+--PLATILLOS
 
+-- Crear la tabla
+CREATE TABLE Platillos (
+    IDPlatillo NUMBER PRIMARY KEY,
+    Nombre VARCHAR2(50),
+    Descripcion VARCHAR2(200),
+    Precio NUMBER,
+    TipoPlatillo VARCHAR2(50)
+);
+
+-- Bloque PL/SQL para INSERTAR un platillo
+CREATE OR REPLACE PROCEDURE InsertarPlatillo (
+    p_IDPlatillo IN NUMBER,
+    p_Nombre IN VARCHAR2,
+    p_Descripcion IN VARCHAR2,
+    p_Precio IN NUMBER,
+    p_TipoPlatillo IN VARCHAR2
+) AS
+BEGIN
+    INSERT INTO Platillos (IDPlatillo, Nombre, Descripcion, Precio, TipoPlatillo)
+    VALUES (p_IDPlatillo, p_Nombre, p_Descripcion, p_Precio, p_TipoPlatillo);
+    COMMIT;
+END InsertarPlatillo;
+
+-- Bloque PL/SQL para ACTUALIZAR un platillo
+CREATE OR REPLACE PROCEDURE ActualizarPlatillo (
+    p_IDPlatillo IN NUMBER,
+    p_Nombre IN VARCHAR2,
+    p_Descripcion IN VARCHAR2,
+    p_Precio IN NUMBER,
+    p_TipoPlatillo IN VARCHAR2
+) AS
+BEGIN
+    UPDATE Platillos
+    SET Nombre = p_Nombre,
+        Descripcion = p_Descripcion,
+        Precio = p_Precio,
+        TipoPlatillo = p_TipoPlatillo
+    WHERE IDPlatillo = p_IDPlatillo;
+    COMMIT;
+END ActualizarPlatillo;
+
+-- Bloque PL/SQL para ELIMINAR un platillo
+CREATE OR REPLACE PROCEDURE EliminarPlatillo (p_IDPlatillo IN NUMBER) AS
+BEGIN
+    DELETE FROM Platillos WHERE IDPlatillo = p_IDPlatillo;
+    COMMIT;
+END EliminarPlatillo;
+
+-- Bloque PL/SQL para OBTENER todos los platillos
+CREATE OR REPLACE FUNCTION ObtenerPlatillos RETURN SYS_REFCURSOR AS
+    platillos_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN platillos_cursor FOR
+        SELECT * FROM Platillos;
+    RETURN platillos_cursor;
+END ObtenerPlatillos;
+
+INSERT INTO Platillos (IDPlatillo, Nombre, Descripcion, Precio, TipoPlatillo)
+VALUES (1, 'Ensalada César', 'Ensalada fresca con pollo a la parrilla y aderezo César', 8.99, 'Ensalada');
+
+INSERT INTO Platillos (IDPlatillo, Nombre, Descripcion, Precio, TipoPlatillo)
+VALUES (2, 'Pizza Margarita', 'Pizza clásica con tomate, mozzarella y albahaca', 12.99, 'Pizza');
+
+INSERT INTO Platillos (IDPlatillo, Nombre, Descripcion, Precio, TipoPlatillo)
+VALUES (3, 'Pasta Alfredo', 'Pasta con salsa Alfredo y pollo', 11.99, 'Pasta');
+
+--categorias platillos
+
+CREATE TABLE categoria_platillos (
+    id_categoria NUMBER PRIMARY KEY,
+    nombre_categoria VARCHAR2(100)
+);
+
+CREATE OR REPLACE PROCEDURE insertar_categoria (
+    p_id_categoria IN NUMBER,
+    p_nombre_categoria IN VARCHAR2
+) IS
+BEGIN
+    INSERT INTO categoria_platillos (id_categoria, nombre_categoria)
+    VALUES (p_id_categoria, p_nombre_categoria);
+    COMMIT;
+END;
+/
+
+CREATE OR REPLACE FUNCTION obtener_categoria (
+    p_id_categoria IN NUMBER
+) RETURN VARCHAR2 IS
+    v_nombre_categoria VARCHAR2(100);
+BEGIN
+    SELECT nombre_categoria INTO v_nombre_categoria
+    FROM categoria_platillos
+    WHERE id_categoria = p_id_categoria;
+
+    RETURN v_nombre_categoria;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE actualizar_categoria (
+    p_id_categoria IN NUMBER,
+    p_nuevo_nombre_categoria IN VARCHAR2
+) IS
+BEGIN
+    UPDATE categoria_platillos
+    SET nombre_categoria = p_nuevo_nombre_categoria
+    WHERE id_categoria = p_id_categoria;
+
+    COMMIT;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE eliminar_categoria (
+    p_id_categoria IN NUMBER
+) IS
+BEGIN
+    DELETE FROM categoria_platillos
+    WHERE id_categoria = p_id_categoria;
+
+    COMMIT;
+END;
+/
+
+INSERT INTO categoria_platillos (id_categoria, nombre_categoria)
+VALUES (1, 'Pizza');
+
+INSERT INTO categoria_platillos (id_categoria, nombre_categoria)
+VALUES (2, 'Gourmet');
+
+INSERT INTO categoria_platillos (id_categoria, nombre_categoria)
+VALUES (3, 'Pasta');
