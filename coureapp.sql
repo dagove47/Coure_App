@@ -485,4 +485,124 @@ BEGIN
 END EliminarProveedor;
 /
 
+--mesas
+CREATE TABLE Mesas (
+    ID_DE_MESA NUMBER PRIMARY KEY,
+    NUMERO_DE_MESA NUMBER,
+    CAPACIDAD NUMBER
+);
+CREATE SEQUENCE SEQ_MESAS START WITH 1 INCREMENT BY 1;
 
+CREATE OR REPLACE PROCEDURE CrearMesa(
+    p_numero_mesa IN NUMBER,
+    p_capacidad IN NUMBER
+) AS
+BEGIN
+    INSERT INTO Mesas (ID_DE_MESA, NUMERO_DE_MESA, CAPACIDAD)
+    VALUES (SEQ_MESAS.NEXTVAL, p_numero_mesa, p_capacidad);
+    COMMIT;
+END CrearMesa;
+/
+
+CREATE OR REPLACE FUNCTION ObtenerMesa(p_id_mesa IN NUMBER) RETURN Mesas%ROWTYPE AS
+    v_mesa Mesas%ROWTYPE;
+BEGIN
+    SELECT *
+    INTO v_mesa
+    FROM Mesas
+    WHERE ID_DE_MESA = p_id_mesa;
+
+    RETURN v_mesa;
+END ObtenerMesa;
+/
+
+CREATE OR REPLACE PROCEDURE ActualizarMesa(
+    p_id_mesa IN NUMBER,
+    p_numero_mesa IN NUMBER,
+    p_capacidad IN NUMBER
+) AS
+BEGIN
+    UPDATE Mesas
+    SET
+        NUMERO_DE_MESA = p_numero_mesa,
+        CAPACIDAD = p_capacidad
+    WHERE ID_DE_MESA = p_id_mesa;
+    COMMIT;
+END ActualizarMesa;
+/
+
+CREATE OR REPLACE PROCEDURE EliminarMesa(p_id_mesa IN NUMBER) AS
+BEGIN
+    DELETE FROM Mesas WHERE ID_DE_MESA = p_id_mesa;
+    COMMIT;
+END EliminarMesa;
+/
+
+
+--PLATILLOS
+
+-- Crear la tabla
+CREATE TABLE Platillos (
+    IDPlatillo NUMBER PRIMARY KEY,
+    Nombre VARCHAR2(50),
+    Descripcion VARCHAR2(200),
+    Precio NUMBER,
+    TipoPlatillo VARCHAR2(50)
+);
+
+-- Bloque PL/SQL para INSERTAR un platillo
+CREATE OR REPLACE PROCEDURE InsertarPlatillo (
+    p_IDPlatillo IN NUMBER,
+    p_Nombre IN VARCHAR2,
+    p_Descripcion IN VARCHAR2,
+    p_Precio IN NUMBER,
+    p_TipoPlatillo IN VARCHAR2
+) AS
+BEGIN
+    INSERT INTO Platillos (IDPlatillo, Nombre, Descripcion, Precio, TipoPlatillo)
+    VALUES (p_IDPlatillo, p_Nombre, p_Descripcion, p_Precio, p_TipoPlatillo);
+    COMMIT;
+END InsertarPlatillo;
+
+-- Bloque PL/SQL para ACTUALIZAR un platillo
+CREATE OR REPLACE PROCEDURE ActualizarPlatillo (
+    p_IDPlatillo IN NUMBER,
+    p_Nombre IN VARCHAR2,
+    p_Descripcion IN VARCHAR2,
+    p_Precio IN NUMBER,
+    p_TipoPlatillo IN VARCHAR2
+) AS
+BEGIN
+    UPDATE Platillos
+    SET Nombre = p_Nombre,
+        Descripcion = p_Descripcion,
+        Precio = p_Precio,
+        TipoPlatillo = p_TipoPlatillo
+    WHERE IDPlatillo = p_IDPlatillo;
+    COMMIT;
+END ActualizarPlatillo;
+
+-- Bloque PL/SQL para ELIMINAR un platillo
+CREATE OR REPLACE PROCEDURE EliminarPlatillo (p_IDPlatillo IN NUMBER) AS
+BEGIN
+    DELETE FROM Platillos WHERE IDPlatillo = p_IDPlatillo;
+    COMMIT;
+END EliminarPlatillo;
+
+-- Bloque PL/SQL para OBTENER todos los platillos
+CREATE OR REPLACE FUNCTION ObtenerPlatillos RETURN SYS_REFCURSOR AS
+    platillos_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN platillos_cursor FOR
+        SELECT * FROM Platillos;
+    RETURN platillos_cursor;
+END ObtenerPlatillos;
+
+INSERT INTO Platillos (IDPlatillo, Nombre, Descripcion, Precio, TipoPlatillo)
+VALUES (1, 'Ensalada César', 'Ensalada fresca con pollo a la parrilla y aderezo César', 8.99, 'Ensalada');
+
+INSERT INTO Platillos (IDPlatillo, Nombre, Descripcion, Precio, TipoPlatillo)
+VALUES (2, 'Pizza Margarita', 'Pizza clásica con tomate, mozzarella y albahaca', 12.99, 'Pizza');
+
+INSERT INTO Platillos (IDPlatillo, Nombre, Descripcion, Precio, TipoPlatillo)
+VALUES (3, 'Pasta Alfredo', 'Pasta con salsa Alfredo y pollo', 11.99, 'Pasta');

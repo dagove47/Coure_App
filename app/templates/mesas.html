@@ -1,62 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Acomodo de Mesas</title>
-    <meta charset="utf-8">
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>CRUD de Mesas</title>
+</head>
+<body>
+
+<div class="container mt-3">
+    <h2>CRUD de Mesas</h2>
     
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/homecss/open-iconic-bootstrap.min.css">
-    <link rel="stylesheet" href="../static/css/homecss/animate.css">
-    <link rel="stylesheet" href="../static/css/homecss/owl.carousel.min.css">
-    <link rel="stylesheet" href="../static/css/homecss/owl.theme.default.min.css">
-    <link rel="stylesheet" href="../static/css/homecss/magnific-popup.css">
-    <link rel="stylesheet" href="../static/css/homecss/aos.css">
-    <link rel="stylesheet" href="../static/css/homecss/ionicons.min.css">
-    <link rel="stylesheet" href="../static/css/homecss/bootstrap-datepicker.css">
-    <link rel="stylesheet" href="../static/css/homecss/jquery.timepicker.css">
-    <link rel="stylesheet" href="../static/css/homecss/flaticon.css">
-    <link rel="stylesheet" href="../static/css/homecss/icomoon.css">
-    <link rel="stylesheet" href="../static/css/homecss/style.css">
-  </head>
-  <body>
-  	<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-	    <div class="container">
-	      <a class="navbar-brand" href="#"><span class="flaticon-pizza-1 mr-1"></span>Acomodo de Mesas</a>
-	      <!-- Resto del código del menú -->
-	    </div>
-	</nav>
-
-    <section class="ftco-section">
-      <div class="container">
-        <div class="row justify-content-center mb-5 pb-3">
-          <div class="col-md-7 heading-section ftco-animate text-center">
-            <h2 class="mb-4">Acomodo de Mesas</h2>
-          </div>
-        </div>
-        <div class="row d-flex">
-          {% for mesa in mesas %}
-            <div class="col-md-4 d-flex ftco-animate">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Mesa {{ mesa.numero_mesa }}</h5>
-                  <p class="card-text">Capacidad: {{ mesa.capacidad }}</p>
-                  <p class="card-text">Estado: {{ mesa.estado }}</p>
-                  <!-- Puedes agregar más información según sea necesario -->
-                </div>
-              </div>
+    <!-- Formulario para crear una nueva mesa -->
+    <form action="/mesa/agregar" method="post" class="mb-3">
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="numero_mesa">Número de Mesa</label>
+                <input type="number" class="form-control" id="numero_mesa" name="numero_mesa" required>
             </div>
-          {% endfor %}
+            <div class="form-group col-md-3">
+                <label for="capacidad">Capacidad</label>
+                <input type="number" class="form-control" id="capacidad" name="capacidad" required>
+            </div>
+            <div class="form-group col-md-2">
+                <button type="submit" class="btn btn-success btn-block">Agregar Mesa</button>
+            </div>
         </div>
-      </div>
-    </section>
+    </form>
+    
+    <!-- Tabla de Mesas -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID de Mesa</th>
+                <th>Número de Mesa</th>
+                <th>Capacidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mesa in mesas %}
+                <tr>
+                    <td>{{ mesa[0] }}</td>
+                    <td>{{ mesa[1] }}</td>
+                    <td>{{ mesa[2] }}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editarMesa{{ mesa[0] }}" aria-expanded="false" aria-controls="editarMesa{{ mesa[0] }}">Editar</button>
+                        <a href="{{ url_for('eliminar_mesa', id_mesa=mesa[0]) }}" class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
 
-    <footer class="ftco-footer ftco-section img">
-    	<!-- Código del pie de página -->
-    </footer>
+                <!-- Formulario de edición para cada mesa -->
+                <tr class="collapse" id="editarMesa{{ mesa[0] }}">
+                    <td colspan="4">
+                        <form action="/mesa/editar/{{ mesa[0] }}" method="post">
+                            <h3>Editar Mesa</h3>
+                            <div class="form-group">
+                                <label for="edit_numero_mesa">Número de Mesa</label>
+                                <input type="number" class="form-control" id="edit_numero_mesa" name="numero_mesa" value="{{ mesa[1] }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_capacidad">Capacidad</label>
+                                <input type="number" class="form-control" id="edit_capacidad" name="capacidad" value="{{ mesa[2] }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-    <!-- Código de los scripts -->
-  </body>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</body>
 </html>
-
-
