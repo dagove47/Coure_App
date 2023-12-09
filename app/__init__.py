@@ -338,7 +338,61 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
+#mesas
+@app.route('/mesas')
+def listar_mesas():
+    conn, cursor = get_db_connection()
+    cursor.execute("SELECT * FROM Mesas")
+    mesas = cursor.fetchall()
+    close_db_connection(conn, cursor)
+    return render_template('mesas.html', mesas=mesas)
 
+@app.route('/mesa/agregar', methods=['POST'])
+def agregar_mesa():
+    conn, cursor = get_db_connection()
+    if request.method == 'POST':
+        numero_mesa = request.form['numero_mesa']
+        capacidad = request.form['capacidad']
+
+        with conn.cursor() as cursor:
+            cursor.execute("INSERT INTO Mesas (ID_DE_MESA, NUMERO_DE_MESA, CAPACIDAD) VALUES (SEQ_MESAS.NEXTVAL, :1, :2)",
+                           (numero_mesa, capacidad))
+            conn.commit()
+
+    return redirect(url_for('listar_mesas'))
+
+@app.route('/mesa/editar/<int:id_mesa>', methods=['GET', 'POST'])
+def editar_mesa(id_mesa):
+    conn, cursor = get_db_connection()
+    if request.method == 'POST':
+        numero_mesa = request.form['numero_mesa']
+        capacidad = request.form['capacidad']
+
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE Mesas SET NUMERO_DE_MESA = :1, CAPACIDAD = :2 WHERE ID_DE_MESA = :3",
+                           (numero_mesa, capacidad, id_mesa))
+            conn.commit()
+
+        return redirect(url_for('listar_mesas'))
+
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT * FROM Mesas WHERE ID_DE_MESA = :1", (id_mesa,))
+        mesa = cursor.fetchone()
+
+    return render_template('mesas.html', mesas=[mesa])
+
+@app.route('/mesa/eliminar/<int:id_mesa>')
+def eliminar_mesa(id_mesa):
+    conn, cursor = get_db_connection()
+    with conn.cursor() as cursor:
+        cursor.execute("DELETE FROM Mesas WHERE ID_DE_MESA = :1", (id_mesa,))
+        conn.commit()
+
+   
+    return redirect(url_for('listar_mesas'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 
