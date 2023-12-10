@@ -257,19 +257,19 @@ def eliminar_factura(id_factura):
 
 #    return render_template('reservaciones.html')
 
-@app.route('/reservaciones')
-def reservaciones():
-    conn, cursor = get_db_connection()
+#@app.route('/reservaciones')
+#def reservaciones():
+ #   conn, cursor = get_db_connection()
 
     # Obtener la lista de reservaciones desde la base de datos
-    cursor.execute("SELECT * FROM Reservaciones")
+  #  cursor.execute("SELECT * FROM Reservaciones")
     
 
-    reservaciones_list = cursor.fetchall()  # Obtener la lista de reservaciones
+   # reservaciones_list = cursor.fetchall()  # Obtener la lista de reservaciones
 
-    close_db_connection(conn, cursor)
+    #close_db_connection(conn, cursor)
 
-    return render_template('reservaciones.html', reservaciones=reservaciones_list)
+    #return render_template('reservaciones.html', reservaciones=reservaciones_list)
 
 
 # Pagos
@@ -991,7 +991,87 @@ def eliminar_resena(id_resena):
 if __name__ == '__main__':
     app.run(debug=True)
 
+##reservaciones
+@app.route('/reservaciones')
+def listar_reservaciones():
+    conn, cursor = get_db_connection()
+    cursor = conn.cursor()
 
+    # Obtener todas las reservaciones
+    cursor.execute('SELECT * FROM Reservaciones')
+    reservaciones = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('reservaciones.html', reservaciones=reservaciones)
+
+@app.route('/crear', methods=['GET', 'POST'])
+def crear_reservacion():
+    if request.method == 'POST':
+        conn, cursor = get_db_connection()
+        cursor = conn.cursor()
+
+        # Obtener datos del formulario
+        id_reservacion = request.form['id_reservacion']
+        fecha_hora = request.form['fecha_hora']
+        numero_personas = request.form['numero_personas']
+
+        # Lógica para crear una nueva reservación
+        cursor.callproc('insertar_reservacion', (id_reservacion, fecha_hora, numero_personas))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return redirect(url_for('listar_reservaciones'))
+
+    return render_template('reservaciones.html')
+
+@app.route('/editar/<int:id_reservacion>', methods=['GET', 'POST'])
+def editar_reservacion(id_reservacion):
+    conn, cursor = get_db_connection()
+    cursor = conn.cursor()
+
+    # Obtener datos de la reservación a editar
+    cursor.callproc('obtener_reservacion', (id_reservacion,))
+    reservacion = cursor.fetchone()
+
+    if request.method == 'POST':
+        # Obtener nuevos datos del formulario
+        nueva_fecha_hora = request.form['nueva_fecha_hora']
+        nuevo_numero_personas = request.form['nuevo_numero_personas']
+
+        # Lógica para actualizar la reservación
+        cursor.callproc('actualizar_reservacion', (id_reservacion, nueva_fecha_hora, nuevo_numero_personas))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return redirect(url_for('listar_reservaciones'))
+
+    cursor.close()
+    conn.close()
+
+    return render_template('reservaciones.html', reservacion=reservacion)
+
+@app.route('/eliminar/<int:id_reservacion>')
+def eliminar_reservacion(id_reservacion):
+    conn, cursor = get_db_connection()
+    cursor = conn.cursor()
+
+    # Lógica para eliminar la reservación
+    cursor.callproc('eliminar_reservacion', (id_reservacion,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for('listar_reservaciones'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 

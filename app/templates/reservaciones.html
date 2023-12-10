@@ -1,95 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <title>Reservaciones - Coure App</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>CRUD Reservaciones</title>
+    <style>
+        body {
+            background: url('https://cloudfront-us-east-1.images.arcpublishing.com/elespectador/RCDPFEWWPRCGVLHJEA3ZK2HA3Y.jpg') center center fixed;
+            background-size: cover;
+            padding: 20px;
+            color: black;
+            font-family: 'Arial', sans-serif;
+        }
 
-    <link rel="stylesheet" href="../static/css/homecss/open-iconic-bootstrap.min.css">
-    <link rel="stylesheet" href="../static/css/homecss/animate.css">
-    
-    <link rel="stylesheet" href="../static/css/homecss/owl.carousel.min.css">
-    <link rel="stylesheet" href="../static/css/homecss/owl.theme.default.min.css">
-    <link rel="stylesheet" href="../static/css/homecss/magnific-popup.css">
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
 
-    <link rel="stylesheet" href="../static/css/homecss/aos.css">
+        .btn-primary,
+        .btn-warning,
+        .btn-danger {
+            background-color: #f83f24;
+            border-color: #f83f24;
+        }
 
-    <link rel="stylesheet" href="../static/css/homecss/ionicons.min.css">
+        .btn-primary:hover,
+        .btn-warning:hover,
+        .btn-danger:hover {
+            background-color: #cc3420;
+            border-color: #cc3420;
+        }
 
-    <link rel="stylesheet" href="../static/css/homecss/bootstrap-datepicker.css">
-    <link rel="stylesheet" href="../static/css/homecss/jquery.timepicker.css">
+        .card-title,
+        .card-text {
+            color: #343a40; /* Cambiado a un tono más oscuro para mejor visibilidad */
+        }
 
-    <link rel="stylesheet" href="../static/css/homecss/flaticon.css">
-    <link rel="stylesheet" href="../static/css/homecss/icomoon.css">
-    <link rel="stylesheet" href="../static/css/homecss/style.css">
+        #back-to-index {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-        <div class="container">
-            <a class="navbar-brand" href="home"><span class="flaticon-pizza-1 mr-1"></span>Coure<br><small>App</small></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="oi oi-menu"></span> Menu
-            </button>
-            <div class="collapse navbar-collapse" id="ftco-nav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a href="home" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Menu</a></li>
-                    <li class="nav-item"><a href="promos" class="nav-link">Promociones</a></li>
-                    <li class="nav-item active"><a href="reservaciones.html" class="nav-link">Reservaciones</a></li>
-                    <li class="nav-item"><a href="mesas.html" class="nav-link">Mesas</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Blog</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">About</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
 
-    <section class="home-slider owl-carousel img" style="background-image: url(../static/assets/images/bg_1.jpg);">
-        <div class="slider-item" style="background-image: url(../static/assets/images/bg_3.jpg);">
-            <div class="overlay"></div>
-            <div class="container">
-                <div class="row slider-text justify-content-center align-items-center">
-                    <div class="col-md-7 col-sm-12 text-center ftco-animate">
-                        <h1 class="mb-3 mt-5 bread">Reservaciones</h1>
-                        <p>¡Haz tu reserva ahora!</p>
-                    </div>
+    <div class="container mt-5">
+        <h2>Reservaciones</h2>
+
+        <!-- Mostrar tabla con todas las reservaciones -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID Reservación</th>
+                    <th>Fecha y Hora</th>
+                    <th>Número de Personas</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservacion in reservaciones %}
+                    <tr>
+                        <td>{{ reservacion.ID_RESERVACION }}</td>
+                        <td>{{ reservacion.FECHA_HORA_RESERVACION }}</td>
+                        <td>{{ reservacion.NUMERO_PERSONAS }}</td>
+                        <td>
+                            <a href="{{ url_for('editar_reservacion', id_reservacion=reservacion.ID_RESERVACION) }}" class="btn btn-warning">Editar</a>
+                            <a href="{{ url_for('eliminar_reservacion', id_reservacion=reservacion.ID_RESERVACION) }}" class="btn btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Formulario para crear nueva reservación -->
+        <h3 class="mt-4">Crear Nueva Reservación</h3>
+        <form method="POST" action="{{ url_for('crear_reservacion') }}">
+            <div class="form-group">
+                <label for="id_reservacion">ID Reservación</label>
+                <input type="number" class="form-control" id="id_reservacion" name="id_reservacion" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_hora">Fecha y Hora</label>
+                <input type="datetime-local" class="form-control" id="fecha_hora" name="fecha_hora" required>
+            </div>
+            <div class="form-group">
+                <label for="numero_personas">Número de Personas</label>
+                <input type="number" class="form-control" id="numero_personas" name="numero_personas" required>
+            </div>
+            <button type="submit" class="btn btn-success">Crear</button>
+        </form>
+
+        <!-- Formulario para editar reservación -->
+        {% if reservacion %}
+            <h3 class="mt-4">Editar Reservación</h3>
+            <form method="POST" action="{{ url_for('editar_reservacion', id_reservacion=reservacion.ID_RESERVACION) }}">
+                <div class="form-group">
+                    <label for="nueva_fecha_hora">Nueva Fecha y Hora</label>
+                    <input type="datetime-local" class="form-control" id="nueva_fecha_hora" name="nueva_fecha_hora" value="{{ reservacion.FECHA_HORA_RESERVACION }}" required>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="ftco-section">
-        <div class="container">
-            <!-- Contenido de la sección de reservaciones -->
-            <!-- Puedes agregar el formulario de reservaciones y otra información relevante aquí -->
-        </div>
-    </section>
-
-    <!-- Pie de página -->
-    <footer class="ftco-footer ftco-section img">
-        <div class="overlay"></div>
-        <div class="container">
-            <!-- Contenido del pie de página -->
-        </div>
-    </footer>
-
-    <!-- Loader -->
-    <div id="ftco-loader" class="show fullscreen">
-        <svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg>
+                <div class="form-group">
+                    <label for="nuevo_numero_personas">Nuevo Número de Personas</label>
+                    <input type="number" class="form-control" id="nuevo_numero_personas" name="nuevo_numero_personas" value="{{ reservacion.NUMERO_PERSONAS }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </form>
+        {% endif %}
     </div>
 
-    <!-- Scripts JS -->
-    <script src="../static/js/homejs/jquery.min.js"></script>
-    <script src="../static/js/homejs/jquery-migrate-3.0.1.min.js"></script>
-    <script src="../static/js/homejs/popper.min.js"></script>
-    <script src="../static/js/homejs/bootstrap.min.js"></script>
-    <!-- Otros scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-    
