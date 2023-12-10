@@ -9,11 +9,12 @@
 
     <form class="form-register" action="{{ url_for('editarpromo' , id=promociones[0]) }}" method="POST" autocomplete="off" enctype="multipart/form-data">
         <h1> Editar Promociones</h1>
+       <!--
         <div class="container--flex">
             <label class="form__label">ID</label>
             <input class="form__input" type="text" name="id" value="{{ promociones[0] }}" required><br>    
         </div> 
-
+    -->
         <div class="container--flex">
             <label class="form__label">TITULO</label>
             <input class="form__input" type="text" name="titulo" value="{{ promociones[1] }}" required><br>

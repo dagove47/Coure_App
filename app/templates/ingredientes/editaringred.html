@@ -9,11 +9,12 @@
 
     <form class="form-register" action="{{ url_for('editaringrediente', id_in=ingrediente[0]) }}" method="POST" autocomplete="off" enctype="multipart/form-data">
         <h1>Editar Ingrediente</h1>
+        <!--
         <div class="container--flex">
             <label class="form__label">ID</label>
             <input class="form__input" type="text" name="id_in" placeholder="id"  value= "{{ingrediente[0]}}" required><br>    
         </div> 
-
+    -->
         <div class="container--flex">
             <label class="form__label">NOMBRE</label>
             <input class="form__input" type="text" name="nombre_in" placeholder="nombre" value="{{ingrediente[1]}}" required><br>

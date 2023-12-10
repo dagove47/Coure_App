@@ -662,7 +662,6 @@ foreign key (proveedor) references proveedor(id_proveedor)
 
 --procedure para agregar ingrediente
 CREATE OR REPLACE PROCEDURE INSERT_INGREDIENTE (
-   id_in IN NUMBER,
    nombre_in IN VARCHAR2,
    proveedor IN NUMBER,
    precio IN NUMBER
@@ -681,8 +680,8 @@ BEGIN
    END;
 
    -- The selected proveedor exists, proceed with the ingredientes insertion
-   INSERT INTO ingredientes (id_in, nombre_in, proveedor, precio)
-   VALUES (id_in, nombre_in, proveedor, precio);
+   INSERT INTO ingredientes (nombre_in, proveedor, precio)
+   VALUES (nombre_in, proveedor, precio);
 END INSERT_INGREDIENTE;
 
 
@@ -749,6 +748,42 @@ BEGIN
     COMMIT;
 END editar_promo;
 
+
+-- //FINALIZA PROMOCIONES 
+
+
+--// PROMOCIONES E INGREDIENTES
+
+              -- .......   SECUENCIAS   ........ ---
+
+CREATE SEQUENCE seq_promociones START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_ingredientes START WITH 1 INCREMENT BY 1;
+
+            --- .......  END SECUENCIAS ....... ---
+
+
+            --- .......  TRIGGERS  ....... ---
+            
+CREATE OR REPLACE TRIGGER trg_before_insert_promociones
+BEFORE INSERT ON promociones
+FOR EACH ROW
+BEGIN
+    SELECT seq_promociones.NEXTVAL INTO :NEW.id FROM DUAL;
+END;
+
+--
+CREATE OR REPLACE TRIGGER trg_before_insert_ingredientes
+BEFORE INSERT ON ingredientes
+FOR EACH ROW
+BEGIN
+    SELECT seq_ingredientes.NEXTVAL INTO :NEW.id_in FROM DUAL;
+END;
+
+
+
+--- .......  ENDS TRIGGERS  ....... ---
+
+--// FINALIZA PROMOCIONES E INGREDIENTES
 
 -- CRUD PEDIDOS
 -- CREATE

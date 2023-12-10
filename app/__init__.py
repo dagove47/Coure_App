@@ -511,7 +511,7 @@ if __name__ == '__main__':
 
 
 
-
+# -----------------    PROMOCIONES    ----------------
 
 #Formulario Promociones
 @app.route('/admin/agregarPromo' ,methods = ['GET', 'POST'])
@@ -521,7 +521,7 @@ def file_upload ():
     
 
     if request.method == 'POST':
-        id = request.form ['id']
+        #id = request.form ['id']
         titulo = request.form ['titulo']
         descripcion = request.form ['descripcion']
         fecha = request.form ['fecha']
@@ -529,8 +529,8 @@ def file_upload ():
 
         if conn and cursor:
             try: 
-                cursor.execute("INSERT INTO Promociones (id,titulo, descripcion, fecha, archivo)VALUES (:id, :titulo, :descripcion, :fecha, :archivo)",
-                   {"id":id,"titulo":titulo, "descripcion":descripcion,"fecha":fecha, "archivo":archivo })
+                cursor.execute("INSERT INTO Promociones (titulo, descripcion, fecha, archivo)VALUES ( :titulo, :descripcion, :fecha, :archivo)",
+                   {"titulo":titulo, "descripcion":descripcion,"fecha":fecha, "archivo":archivo })
                 conn.commit()
                 return redirect('/admin')
             except Exception as e:
@@ -609,14 +609,14 @@ def editarpromo(id):
 
     if request.method == 'POST':
         # Obtener datos del formulario
-        id = request.form['id']
+        #id = request.form['id']
         titulo = request.form['titulo']
         descripcion = request.form['descripcion']
         fecha = request.form['fecha']
         archivo = request.files['archivo'].read()
 
         # Ejecutar el procedimiento PL/SQL para editar 
-        cursor.callproc('editar_promo', [id, titulo, descripcion, fecha, archivo])
+        cursor.callproc('editar_promo', [id,titulo, descripcion, fecha, archivo])
         conn.commit()
 
         return redirect('/admin/promociones')
@@ -675,13 +675,13 @@ def editaringrediente(id_in):
 
     if request.method == 'POST':
         # Obtener datos del formulario
-        id_in = request.form['id_in']
+       # id_in = request.form['id_in']
         nombre_in = request.form['nombre_in']
         proveedor_selected = request.form ['proveedor']
         precio = request.form['precio']
 
         # Ejecutar el procedimiento PL/SQL para editar 
-        cursor.callproc('editar_ingrediente', [id_in, nombre_in, proveedor_selected, precio])
+        cursor.callproc('editar_ingrediente', [id_in,nombre_in, proveedor_selected, precio])
         conn.commit()
 
         return redirect('/tablaingredientes')
@@ -705,7 +705,7 @@ def agregar_ingre ():
     
 
     if request.method == 'POST':
-        id_in = request.form['id_in']
+        #id_in = request.form['id_in']
         nombre_in = request.form['nombre']
         proveedor = request.form['proveedor']
         precio = request.form['precio']
@@ -716,7 +716,7 @@ def agregar_ingre ():
                 #pdb.set_trace()
                 #llamar SP
                 
-                cursor.callproc("INSERT_INGREDIENTE", [id_in, nombre_in,proveedor, precio])
+                cursor.callproc("INSERT_INGREDIENTE", [ nombre_in,proveedor, precio])
                 conn.commit()
                 return redirect('/admin')
             except Exception as e:
