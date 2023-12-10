@@ -614,8 +614,8 @@ CREATE TABLE Pedidos (
     Estado_pedido VARCHAR2(50),
     ID_cliente NUMBER,
     ID_empleado NUMBER,
-    FOREIGN KEY (ID_cliente) REFERENCES Clientes(ID_cliente),
-    FOREIGN KEY (ID_empleado) REFERENCES Empleados(ID_empleado)
+    FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente),
+    FOREIGN KEY (id_empleado) REFERENCES Empleados(id_empleado)
 );
 
 -- Crear la tabla Reseñas
@@ -625,5 +625,5 @@ CREATE TABLE Reseñas (
     Calificación NUMBER,
     Fecha_reseña TIMESTAMP,
     ID_cliente NUMBER,
-    FOREIGN KEY (ID_cliente) REFERENCES Clientes(ID_cliente)
+    FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente)
 );
