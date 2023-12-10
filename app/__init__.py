@@ -929,6 +929,67 @@ def eliminar_pedido(id_pedido):
     return redirect(url_for('listar_pedidos'))
 
 
+# ***** CRUD RESENAS *****
+@app.route('/resenas')
+def mostrar_resenas():
+    connection, cursor = get_db_connection()
+    if connection:
+        try:
+            resenas_cursor = cursor.callfunc('obtener_resenas', cx_Oracle.CURSOR)
+            resenas = resenas_cursor.fetchall()
+            return render_template('resenas.html', resenas=resenas)
+        finally:
+            close_db_connection(connection, cursor)
+
+@app.route('/insertar_resena', methods=['POST'])
+def insertar_resena():
+    if request.method == 'POST':
+        comentario = request.form['comentario']
+        calificacion = int(request.form['calificacion'])
+        fecha_resena = datetime.now()
+        id_cliente = int(request.form['id_cliente'])
+
+        connection, cursor = get_db_connection()
+        if connection:
+            try:
+                cursor.callproc('insertar_resena', [comentario, calificacion, fecha_resena, id_cliente])
+                return redirect(url_for('mostrar_resenas'))
+            except cx_Oracle.IntegrityError as e:
+                error, = e.args
+                if error.code == 2291:
+                    # Manejar el error de clave foránea no encontrada
+                    return render_template('error.html', message="ID Cliente no encontrado.")
+                else:
+                    raise
+            finally:
+                close_db_connection(connection, cursor)
+
+@app.route('/actualizar_resena/<int:id_resena>', methods=['POST'])
+def actualizar_resena(id_resena):
+    if request.method == 'POST':
+        comentario = request.form['comentario']
+        calificacion = int(request.form['calificacion'])
+        fecha_resena = datetime.now()
+
+        connection, cursor = get_db_connection()
+        if connection:
+            try:
+                cursor.callproc('actualizar_resena', [id_resena, comentario, calificacion, fecha_resena])
+                return redirect(url_for('mostrar_resenas'))
+            finally:
+                close_db_connection(connection, cursor)
+
+@app.route('/eliminar_resena/<int:id_resena>')
+def eliminar_resena(id_resena):
+    connection, cursor = get_db_connection()
+    if connection:
+        try:
+            cursor.callproc('eliminar_resena', [id_resena])
+            return redirect(url_for('mostrar_resenas'))
+        finally:
+            close_db_connection(connection, cursor)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 

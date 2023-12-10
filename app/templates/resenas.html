@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reseñas</title>
+</head>
+<body>
+
+<h1>Reseñas</h1>
+
+<!-- Mostrar todas las reseñas en una tabla -->
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Comentario</th>
+        <th>Calificación</th>
+        <th>Fecha</th>
+        <th>ID Cliente</th>
+        <th>Acciones</th>
+    </tr>
+    {% for resena in resenas %}
+        <tr>
+            <td>{{ resena[0] }}</td>
+            <td>{{ resena[1] }}</td>
+            <td>{{ resena[2] }}</td>
+            <td>{{ resena[3] }}</td>
+            <td>{{ resena[4] }}</td>
+            <td>
+                <a style="display: none;" href="{{ url_for('actualizar_resena', id_resena=resena[0]) }}">Actualizar</a>
+                <a href="{{ url_for('eliminar_resena', id_resena=resena[0]) }}" onclick="return confirm('¿Estás seguro?')">Eliminar</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<!-- Formulario para insertar reseña -->
+<form method="post" action="{{ url_for('insertar_resena') }}">
+    <h2>Insertar Reseña</h2>
+    <label for="comentario">Comentario:</label>
+    <input type="text" name="comentario" required>
+    <label for="calificacion">Calificación:</label>
+    <input type="number" name="calificacion" required>
+    <label for="id_cliente">ID Cliente:</label>
+    <input type="number" name="id_cliente" required>
+    <input type="submit" value="Insertar">
+</form>
+
+<!-- Formulario para actualizar reseña -->
+<form style="display: none;" method="post" action="{{ url_for('actualizar_resena', id_resena=0) }}">
+    <h2>Actualizar Reseña</h2>
+    <label for="comentario">Comentario:</label>
+    <input type="text" name="comentario" required>
+    <label for="calificacion">Calificación:</label>
+    <input type="number" name="calificacion" required>
+    <input type="submit" value="Actualizar">
+</form>
+
+</body>
+</html>

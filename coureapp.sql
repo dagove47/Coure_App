@@ -774,3 +774,71 @@ CREATE OR REPLACE PROCEDURE Eliminar_Pedido(p_ID_pedido IN NUMBER) AS
 BEGIN
     DELETE FROM Pedidos WHERE ID_pedido = p_ID_pedido;
 END Eliminar_Pedido;
+
+
+-- CRUD RESENAS
+-- Crear la secuencia
+CREATE SEQUENCE seq_resenas START WITH 1 INCREMENT BY 1;
+
+-- Procedimiento para insertar una reseña
+CREATE OR REPLACE PROCEDURE insertar_resena(
+    p_comentario IN VARCHAR2,
+    p_calificacion IN NUMBER,
+    p_fecha_resena IN TIMESTAMP,
+    p_id_cliente IN NUMBER
+)
+AS
+BEGIN
+    INSERT INTO Reseñas (
+        ID_reseña,
+        Comentario,
+        Calificación,
+        Fecha_reseña,
+        ID_cliente
+    ) VALUES (
+        seq_resenas.NEXTVAL,
+        p_comentario,
+        p_calificacion,
+        p_fecha_resena,
+        p_id_cliente
+    );
+    COMMIT;
+END insertar_resena;
+
+-- Procedimiento para actualizar una reseña
+CREATE OR REPLACE PROCEDURE actualizar_resena(
+    p_id_resena IN NUMBER,
+    p_comentario IN VARCHAR2,
+    p_calificacion IN NUMBER,
+    p_fecha_resena IN TIMESTAMP
+)
+AS
+BEGIN
+    UPDATE Reseñas
+    SET
+        Comentario = p_comentario,
+        Calificación = p_calificacion,
+        Fecha_reseña = p_fecha_resena
+    WHERE
+        ID_reseña = p_id_resena;
+    COMMIT;
+END actualizar_resena;
+
+-- Procedimiento para eliminar una reseña
+CREATE OR REPLACE PROCEDURE eliminar_resena(p_id_resena IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Reseñas WHERE ID_reseña = p_id_resena;
+    COMMIT;
+END eliminar_resena;
+
+-- Función para obtener todas las reseñas
+CREATE OR REPLACE FUNCTION obtener_resenas RETURN SYS_REFCURSOR
+AS
+    resenas_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN resenas_cursor FOR
+    SELECT * FROM Reseñas;
+    RETURN resenas_cursor;
+END obtener_resenas;
+
