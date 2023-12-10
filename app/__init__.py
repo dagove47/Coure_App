@@ -640,8 +640,60 @@ def ingredientes():
     else:
         abort(404)
 
+#listar ingredientes
+@app.route('/tablaingredientes')
+
+def listar_ingre():
+    conn, cursor = get_db_connection()
+
+    try:
+        cursor.execute("SELECT * FROM Ingredientes")
+        ingredientes = cursor.fetchall()
+        return render_template('/ingredientes/ingrediente.html', ingredientes=ingredientes)
+    finally:
+        # Asegúrate de cerrar la conexión en el bloque finally
+        cursor.close()
+        conn.close()
+
+#eliminar ingredientes
+@app.route('/eliminar_ingrediente/<int:id_in>')
+def eliminar_ingrediente(id_in):
+    conn, cursor = get_db_connection()
+    cursor.callproc('eliminar_ingrediente', [id_in])
+    conn.commit()
+    return redirect('/tablaingredientes')
 
 
+#editar ingredientes 
+@app.route('/editaringrediente/<int:id_in>', methods=['GET', 'POST'])
+def editaringrediente(id_in):
+    conn, cursor = get_db_connection()
+
+         #obtener la lista de proveedores
+    cursor.execute ("SELECT * from proveedor")
+    proveedores = cursor.fetchall()
+
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        id_in = request.form['id_in']
+        nombre_in = request.form['nombre_in']
+        proveedor_selected = request.form ['proveedor']
+        precio = request.form['precio']
+
+        # Ejecutar el procedimiento PL/SQL para editar 
+        cursor.callproc('editar_ingrediente', [id_in, nombre_in, proveedor_selected, precio])
+        conn.commit()
+
+        return redirect('/tablaingredientes')
+
+    # Obtener los detalles del empleado para mostrar en el formulario
+    cursor.execute("SELECT * FROM ingredientes WHERE id_in = :id_in", {'id_in': id_in})
+    ingrediente = cursor.fetchone()
+
+
+    return render_template('/ingredientes/editaringred.html', proveedores=proveedores, ingrediente=ingrediente)
+
+#agregar ingredientes
 @app.route('/admin/addingrediente' ,methods = ['GET', 'POST'])
 @role_required(required_role=1)
 def agregar_ingre ():

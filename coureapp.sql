@@ -627,3 +627,102 @@ CREATE TABLE Reseñas (
     ID_cliente NUMBER,
     FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente)
 );
+
+--/////////////     INGREDIENTES     ///////////////
+
+CREATE TABLE ingredientes(
+id_in number primary key,
+nombre_in varchar(200),
+proveedor number,
+precio number, 
+foreign key (proveedor) references proveedor(id_proveedor)
+)
+
+--procedure para agregar ingrediente
+CREATE OR REPLACE PROCEDURE INSERT_INGREDIENTE (
+   id_in IN NUMBER,
+   nombre_in IN VARCHAR2,
+   proveedor IN NUMBER,
+   precio IN NUMBER
+) AS
+BEGIN
+   -- Check if the selected proveedor exists in the proveedores table
+   DECLARE
+      v_proveedor_count NUMBER;
+   BEGIN
+      SELECT COUNT(1) INTO v_proveedor_count FROM proveedor WHERE id_proveedor = proveedor;
+
+      IF v_proveedor_count = 0 THEN
+         -- Raise an exception if the proveedor doesn't exist
+         RAISE_APPLICATION_ERROR(-20001, 'Proveedor no existe');
+      END IF;
+   END;
+
+   -- The selected proveedor exists, proceed with the ingredientes insertion
+   INSERT INTO ingredientes (id_in, nombre_in, proveedor, precio)
+   VALUES (id_in, nombre_in, proveedor, precio);
+END INSERT_INGREDIENTE;
+
+
+--//editar//
+CREATE OR REPLACE PROCEDURE editar_ingrediente (
+    p_id_in IN NUMBER,
+    p_nombre_in IN VARCHAR2,
+    p_proveedor IN NUMBER,
+    p_precio IN NUMBER
+)
+AS
+BEGIN
+    UPDATE ingredientes
+    SET
+        nombre_in = p_nombre_in,
+        proveedor = p_proveedor,
+        precio = p_precio
+    WHERE id_in = p_id_in;
+    
+    COMMIT;
+END editar_ingrediente;
+/
+
+--//eliminar
+CREATE OR REPLACE PROCEDURE eliminar_ingrediente(i_id IN VARCHAR2) AS
+BEGIN
+    DELETE FROM Ingredientes WHERE id = p_id;
+    COMMIT;
+END eliminar_ingrediente;
+
+--/////////////     PROMOCIONES     ///////////////
+
+create table promociones (
+id number primary key,
+titulo varchar(20),
+descripcion varchar(50),
+fecha varchar(10),
+archivo blob
+)
+
+CREATE OR REPLACE PROCEDURE eliminar_promo(p_id IN VARCHAR2) AS
+BEGIN
+    DELETE FROM Promociones WHERE id = p_id;
+    COMMIT;
+END eliminar_promo;
+/
+
+CREATE OR REPLACE PROCEDURE editar_promo(
+    p_id IN VARCHAR2,
+    p_titulo IN VARCHAR2,
+    p_descripcion IN VARCHAR2,
+    p_fecha IN VARCHAR2,
+    p_archivo IN BLOB
+)
+IS
+BEGIN
+    UPDATE promociones
+    SET titulo = p_titulo,
+        descripcion = p_descripcion,
+        fecha = p_fecha,
+        archivo = p_archivo
+    WHERE id = p_id;
+    
+    COMMIT;
+END editar_promo;

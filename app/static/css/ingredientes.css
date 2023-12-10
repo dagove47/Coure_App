@@ -1,65 +1,100 @@
-body{
- background-color: #262a2f;
- color: #333;
+*{
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
-.search-box{
-    width: 600px;
-    background: #fff;
-    margin: 200px auto 0;
-    border-radius: 2px;
-}
-
-.row{
+nav{
     display: flex;
-    align-items: center;
-    padding: 10px 20px;
-
+    width: 100%;
+    background: #593202;
+    position: relative;
+    justify-content: space-between;
+    text-align: center;
 }
 
-input{
-    flex: 1;
-    height: 50px;
-    border: 0;
-    outline: 0;
-    font-size: 18px;
-    color: #333;
-    background: transparent;
+nav .icon{
+    color: rgb(253, 241, 217);
+    font-weight: 800;
+    font-size: 25px;
+    margin: 10px;
+}
+
+
+
+body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url("https://images.unsplash.com/photo-1579751626657-72bc17010498?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+    height: 100vh; 
+    width: 100%;
+    background-size: cover;
+    background-position: center; 
+    margin: 0; 
+}
+
+
+.container{
+    margin: 20px;
 }
 
 button{
-    background: transparent;
-    border: 0;
-    outline: 0;
-}
-
-button .fa-solid{
-    width: 25px;
-    color: #555;
-    font-size: 22px;
-    cursor: pointer;
-}
-
-::placeholder{
-    color: #555;
+    border: none;
+    background: #593202;
+    color: rgb(253, 241, 217);
 }
 
 
 
-
-
-ul li{
-    list-style: none;
-    border-radius: 3px;
-    padding: 15px 10px;
-    cursor: pointer;
+.btn {
+    background: #593202;
+    color: rgb(253, 241, 217);
+    border: none;
 }
 
-ul{
-    border-top: 1px solid #999;
-    padding: 15px 10px;
+.table-container {
+    margin: 50px auto;
+    
 }
 
-ul li:hover{
-    background: #e9f3ff;
-}
+    .custom-table {
+        width: 80%;
+        
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-bottom: 1em;
+        color: #212529;
+        border: 1px solid #dee2e6;
+    }
+
+    .custom-table th, .custom-table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .custom-table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+        background-color: rgb(253, 241, 217);
+    }
+
+    .custom-table tbody+tbody {
+        border-top: 2px solid #dee2e6;
+    }
+
+    .custom-table tbody tr {
+        border-top: 1px solid #dee2e6;
+        
+    }
+
+    .custom-table tbody td {
+        
+        background-color: rgb(253, 241, 217);
+    }
+
+    .custom-table tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+
+
