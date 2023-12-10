@@ -606,3 +606,24 @@ VALUES (2, 'Pizza Margarita', 'Pizza clásica con tomate, mozzarella y albahaca'
 
 INSERT INTO Platillos (IDPlatillo, Nombre, Descripcion, Precio, TipoPlatillo)
 VALUES (3, 'Pasta Alfredo', 'Pasta con salsa Alfredo y pollo', 11.99, 'Pasta');
+
+-- Crear la tabla Pedidos
+CREATE TABLE Pedidos (
+    ID_pedido NUMBER PRIMARY KEY,
+    Fecha_hora_pedido TIMESTAMP,
+    Estado_pedido VARCHAR2(50),
+    ID_cliente NUMBER,
+    ID_empleado NUMBER,
+    FOREIGN KEY (ID_cliente) REFERENCES Clientes(ID_cliente),
+    FOREIGN KEY (ID_empleado) REFERENCES Empleados(ID_empleado)
+);
+
+-- Crear la tabla Reseñas
+CREATE TABLE Reseñas (
+    ID_reseña NUMBER PRIMARY KEY,
+    Comentario VARCHAR2(255),
+    Calificación NUMBER,
+    Fecha_reseña TIMESTAMP,
+    ID_cliente NUMBER,
+    FOREIGN KEY (ID_cliente) REFERENCES Clientes(ID_cliente)
+);
