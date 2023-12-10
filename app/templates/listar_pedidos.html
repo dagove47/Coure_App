@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Pedidos</title>
+</head>
+<body>
+    <h1>Listado de Pedidos</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID Pedido</th>
+                <th>Fecha y Hora del Pedido</th>
+                <th>Estado del Pedido</th>
+                <th>ID Cliente</th>
+                <th>ID Empleado</th>
+                <th>Acciones</th>  <!-- Nueva columna para botones de acciones -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+                <tr>
+                    <td>{{ pedido[0] }}</td>
+                    <td>{{ pedido[1] }}</td>
+                    <td>{{ pedido[2] }}</td>
+                    <td>{{ pedido[3] }}</td>
+                    <td>{{ pedido[4] }}</td>
+                    <td>
+                        <!-- Botón de Editar que redirige a la página de edición -->
+                        <a href="{{ url_for('editar_pedido', id_pedido=pedido[0]) }}">Editar</a>
+                        
+                        <!-- Botón de Eliminar que redirige a la página de eliminación -->
+                        <a href="{{ url_for('eliminar_pedido', id_pedido=pedido[0]) }}">Eliminar</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

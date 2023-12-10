@@ -726,3 +726,51 @@ BEGIN
     
     COMMIT;
 END editar_promo;
+
+
+-- CRUD PEDIDOS
+-- CREATE
+CREATE OR REPLACE PROCEDURE Insertar_Pedido(
+    p_ID_pedido IN NUMBER,
+    p_Fecha_hora_pedido IN TIMESTAMP,
+    p_Estado_pedido IN VARCHAR2,
+    p_ID_cliente IN NUMBER,
+    p_ID_empleado IN NUMBER
+) AS
+BEGIN
+    INSERT INTO Pedidos(ID_pedido, Fecha_hora_pedido, Estado_pedido, ID_cliente, ID_empleado)
+    VALUES (p_ID_pedido, p_Fecha_hora_pedido, p_Estado_pedido, p_ID_cliente, p_ID_empleado);
+END Insertar_Pedido;
+/
+
+-- READ
+CREATE OR REPLACE FUNCTION Obtener_Pedido_3 RETURN SYS_REFCURSOR AS
+    v_result SYS_REFCURSOR;
+BEGIN
+    OPEN v_result FOR
+        SELECT * FROM Pedidos;
+    RETURN v_result;
+END Obtener_Pedido_3;
+
+-- UPDATE
+CREATE OR REPLACE PROCEDURE Actualizar_Pedido(
+    p_ID_pedido IN NUMBER,
+    p_Fecha_hora_pedido IN TIMESTAMP,
+    p_Estado_pedido IN VARCHAR2,
+    p_ID_cliente IN NUMBER,
+    p_ID_empleado IN NUMBER
+) AS
+BEGIN
+    UPDATE Pedidos
+    SET Fecha_hora_pedido = p_Fecha_hora_pedido,
+        Estado_pedido = p_Estado_pedido,
+        ID_cliente = p_ID_cliente,
+        ID_empleado = p_ID_empleado
+    WHERE ID_pedido = p_ID_pedido;
+END Actualizar_Pedido;
+
+-- DELETE
+CREATE OR REPLACE PROCEDURE Eliminar_Pedido(p_ID_pedido IN NUMBER) AS
+BEGIN
+    DELETE FROM Pedidos WHERE ID_pedido = p_ID_pedido;
+END Eliminar_Pedido;

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Pedidos - Editar Pedido</title>
+</head>
+<body>
+    <h1>Editar Pedido - {{ pedido[0] }}</h1>
+
+    <form action="{{ url_for('editar_pedido', id_pedido=pedido[0]) }}" method="post">
+        <!-- Elimina el campo de fecha y hora -->
+        
+        <label for="estado_pedido">Estado:</label>
+        <input type="text" name="estado_pedido" value="{{ pedido[2] }}" required><br>
+
+        <label for="id_cliente">ID Cliente:</label>
+        <input type="text" name="id_cliente" value="{{ pedido[3] }}" required><br>
+
+        <label for="id_empleado">ID Empleado:</label>
+        <input type="text" name="id_empleado" value="{{ pedido[4] }}" required><br>
+
+        <!-- Agrega más campos según sea necesario -->
+
+        <input type="submit" value="Guardar Cambios">
+    </form>
+
+    <br>
+    <a href="{{ url_for('listar_pedidos') }}">Volver al Listado de Pedidos</a>
+</body>
+</html>

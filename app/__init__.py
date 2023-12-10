@@ -842,6 +842,93 @@ def eliminar_mesa(id_mesa):
    
     return redirect(url_for('listar_mesas'))
 
+# ************* PEDIDOS *************
+@app.route('/pedidos')
+def pedidos():
+    return render_template('pedidos.html')
+
+def obtener_proximo_id_pedido():
+    # Función para obtener el próximo ID_pedido disponible
+    conn, cursor = get_db_connection()
+    cursor.execute("SELECT MAX(ID_pedido) FROM Pedidos")
+    result = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
+    return result + 1 if result else 1
+
+# CREATE
+@app.route('/crear_pedido', methods=['GET', 'POST'])
+def crear_pedido():
+    if request.method == 'POST':
+        # Obtener el próximo ID_pedido disponible
+        id_pedido = obtener_proximo_id_pedido()
+
+        fecha_hora_pedido = datetime.now()
+        estado_pedido = request.form['estado_pedido']
+        id_cliente = request.form['id_cliente']
+        id_empleado = request.form['id_empleado']
+
+        conn, cursor = get_db_connection()
+        cursor.callproc('Insertar_Pedido', [id_pedido, fecha_hora_pedido, estado_pedido, id_cliente, id_empleado])
+        cursor.close()
+        conn.commit()
+
+        # Después de crear el pedido, renderizar el formulario de nuevo
+        return render_template('crear_pedido.html')
+
+    # Si es una solicitud GET, simplemente renderizar el formulario
+    return render_template('crear_pedido.html')
+
+
+# READ
+@app.route('/listar_pedidos')
+def listar_pedidos():
+    conn, cursor = get_db_connection()
+
+    result_cursor = cursor.var(cx_Oracle.CURSOR)
+    cursor.execute("BEGIN OPEN :result_cursor FOR SELECT * FROM Pedidos; END;", result_cursor=result_cursor)
+
+    result = result_cursor.getvalue().fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('listar_pedidos.html', pedidos=result)
+
+
+# UPDATE
+@app.route('/editar_pedido/<int:id_pedido>', methods=['GET', 'POST'])
+def editar_pedido(id_pedido):
+    conn, cursor = get_db_connection()
+    pedido = cursor.execute('SELECT * FROM Pedidos WHERE ID_pedido = :id', {'id': id_pedido}).fetchone()
+    cursor.close()
+
+    if request.method == 'POST':
+        fecha_hora_pedido = pedido[1]
+        estado_pedido = request.form['estado_pedido']
+        id_cliente = request.form['id_cliente']
+        id_empleado = request.form['id_empleado']
+
+        conn, cursor = get_db_connection()
+        cursor.callproc('Actualizar_Pedido', [id_pedido, fecha_hora_pedido, estado_pedido, id_cliente, id_empleado])
+        cursor.close()
+        conn.commit()
+
+        return redirect(url_for('listar_pedidos'))
+
+    return render_template('editar_pedido.html', pedido=pedido)
+
+# DELETE
+@app.route('/eliminar_pedido/<int:id_pedido>')
+def eliminar_pedido(id_pedido):
+    conn, cursor = get_db_connection()
+    cursor.callproc('Eliminar_Pedido', [id_pedido])
+    cursor.close()
+    conn.commit()
+
+    return redirect(url_for('listar_pedidos'))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
