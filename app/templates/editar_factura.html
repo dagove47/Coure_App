@@ -10,15 +10,20 @@
         crossorigin="anonymous">
     <style>
         body {
-            background-color: #f8f9fa;
+            background: url('https://images.alphacoders.com/105/1050377.jpg') center center fixed;
+            background-size: cover;
             padding: 20px;
+            color: #ffffff;
         }
 
         .container {
-            background-color: #fff;
-            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 40px; /* Aumentado el padding para dar más espacio */
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px; /* Tamaño máximo del contenedor */
+            margin: auto; /* Centrar el contenedor en la página */
+            margin-top: 50px; /* Espacio en la parte superior del contenedor */
         }
 
         .form-group {
@@ -27,23 +32,24 @@
 
         label {
             font-weight: bold;
+            color: #343a40;
         }
 
         .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
+            background-color: #f83f24;
+            border-color: #f83f24;
         }
 
         .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+            background-color: #cc3420;
+            border-color: #cc3420;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h2>Editar Factura</h2>
+        <h2 class="text-center">Editar Factura</h2>
         <form method="post" action="{{ url_for('actualizar_factura', id_factura=factura[0]) }}">
             <div class="form-group">
                 <label for="id_factura">ID Factura:</label>
@@ -60,9 +66,11 @@
                 <input type="text" class="form-control" id="total" name="total" value="{{ factura[3] }}" required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Actualizar Factura</button>
+            <button type="submit" class="btn btn-primary btn-block">Actualizar Factura</button>
         </form>
     </div>
 </body>
 
 </html>
+
+

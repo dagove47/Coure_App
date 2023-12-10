@@ -4,16 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facturas</title>
+    <title>Facturas de Pizzería</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <!-- Tu código CSS personalizado -->
     <style>
-        /* Agrega aquí tu código CSS personalizado */
         /* Estilos generales */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
+            background: url('https://pixelz.cc/wp-content/uploads/2018/10/pizza-uhd-4k-wallpaper.jpg') center center fixed;
+            background-size: cover;
+            color: #ffffff;
+            padding-top: 50px; /* Para dejar espacio para la barra de navegación */
         }
 
         .container {
@@ -22,7 +24,7 @@
 
         /* Estilos de la tabla */
         .table {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -32,39 +34,40 @@
         }
 
         .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
+            background-color: #f83f24;
+            border-color: #f83f24;
         }
 
         .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+            background-color: #cc3420;
+            border-color: #cc3420;
         }
 
         .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
+            background-color: #2ecc71;
+            border-color: #2ecc71;
         }
 
         .btn-success:hover {
-            background-color: #218838;
-            border-color: #218838;
+            background-color: #27ae60;
+            border-color: #27ae60;
         }
 
         .btn-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
+            background-color: #e74c3c;
+            border-color: #e74c3c;
         }
 
         .btn-danger:hover {
-            background-color: #c82333;
-            border-color: #c82333;
+            background-color: #c0392b;
+            border-color: #c0392b;
         }
 
         /* Estilos de los modales */
         .modal-content {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.9);
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            color: #000000;
         }
 
         /* Estilos del formulario */
@@ -76,8 +79,11 @@
 
 <body>
 
+    <!-- Botón para redirigir a index.html -->
+    <a href="index.html" class="btn btn-primary btn-lg fixed-top ml-3 mt-3">Ir a Inicio</a>
+
     <div class="container mt-5">
-        <h2>Lista de Facturas</h2>
+        <h2 class="text-center">Lista de Facturas</h2>
 
         <!-- Botón para mostrar formulario de agregar factura -->
         <button class="btn btn-success mb-3" data-toggle="modal" data-target="#agregarModal">Agregar Factura</button>
@@ -100,8 +106,8 @@
                     <td>{{ propiedad }}</td>
                     {% endfor %}
                     <td>
-                        <a href="{{ url_for('editar_factura', id_factura=factura[0]) }}">Editar</a> |
-                        <a href="{{ url_for('eliminar_factura', id_factura=factura[0]) }}">Eliminar</a>
+                        <a class="btn btn-primary btn-sm" href="{{ url_for('editar_factura', id_factura=factura[0]) }}">Editar</a>
+                        <a class="btn btn-danger btn-sm" href="{{ url_for('eliminar_factura', id_factura=factura[0]) }}">Eliminar</a>
                     </td>
                 </tr>
                 {% endfor %}
