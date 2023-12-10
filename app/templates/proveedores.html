@@ -1,103 +1,134 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Proveedores</title>
-    <!-- Agrega los enlaces a los estilos de Bootstrap aquí -->
+    <!-- Enlaces a los estilos de Bootstrap y estilos personalizados -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background: url('https://wallpapersmug.com/download/3840x2160/b67e3e/pizza-slices-food.jpg') center center fixed;
+            background-size: cover;
+            padding: 20px;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .btn-primary,
+        .btn-warning,
+        .btn-danger {
+            background-color: #f83f24;
+            border-color: #f83f24;
+        }
+
+        .btn-primary:hover,
+        .btn-warning:hover,
+        .btn-danger:hover {
+            background-color: #cc3420;
+            border-color: #cc3420;
+        }
+
+        .card-title,
+        .card-text {
+            color: #343a40; /* Cambiado a un tono más oscuro para mejor visibilidad */
+        }
+
+        #back-to-index {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
+
 <body>
+    <a href="index.html" class="btn btn-primary" id="back-to-index">Volver a Index</a>
 
-<div class="container mt-4">
-    <h2>Proveedores</h2>
+    <div class="container mt-4">
+        <h2>Proveedores</h2>
 
-    <!-- Formulario para crear un nuevo proveedor -->
-    <form method="post" action="/crear">
-        <div class="form-row">
-            <div class="form-group col-md-2">
-                <label for="id_proveedor">ID Proveedor:</label>
-                <input type="text" class="form-control" id="id_proveedor" name="id_proveedor" required>
+        <!-- Formulario para crear un nuevo proveedor -->
+        <form method="post" action="/crear">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="id_proveedor">ID Proveedor:</label>
+                    <input type="text" class="form-control" id="id_proveedor" name="id_proveedor" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="nombre_empresa">Nombre Empresa:</label>
+                    <input type="text" class="form-control" id="nombre_empresa" name="nombre_empresa" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="nombre_contacto">Nombre Contacto:</label>
+                    <input type="text" class="form-control" id="nombre_contacto" name="nombre_contacto" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono" required>
+                </div>
             </div>
-            <div class="form-group col-md-4">
-                <label for="nombre_empresa">Nombre Empresa:</label>
-                <input type="text" class="form-control" id="nombre_empresa" name="nombre_empresa" required>
+            <div class="form-row">
+                <div class="form-group col-md-9">
+                    <label for="correo_electronico">Correo Electrónico:</label>
+                    <input type="email" class="form-control" id="correo_electronico" name="correo_electronico" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <button type="submit" class="btn btn-primary btn-block mt-4">Crear Proveedor</button>
+                </div>
             </div>
-            <div class="form-group col-md-4">
-                <label for="nombre_contacto">Nombre Contacto:</label>
-                <input type="text" class="form-control" id="nombre_contacto" name="nombre_contacto" required>
-            </div>
-            <div class="form-group col-md-2">
-                <label for="telefono">Teléfono:</label>
-                <input type="text" class="form-control" id="telefono" name="telefono" required>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="correo_electronico">Correo Electrónico:</label>
-                <input type="email" class="form-control" id="correo_electronico" name="correo_electronico" required>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Crear Proveedor</button>
-    </form>
+        </form>
 
-    <!-- Tabla para mostrar la lista de proveedores -->
-    <table class="table mt-4">
-        <thead>
-            <tr>
-                <th>ID Proveedor</th>
-                <th>Nombre Empresa</th>
-                <th>Nombre Contacto</th>
-                <th>Teléfono</th>
-                <th>Correo Electrónico</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
+        <!-- Tabla para mostrar la lista de proveedores -->
+        <div class="row mt-4">
             {% for proveedor in proveedores %}
-            <tr>
-                <td>{{ proveedor[0] }}</td>
-                <td>{{ proveedor[1] }}</td>
-                <td>{{ proveedor[2] }}</td>
-                <td>{{ proveedor[3] }}</td>
-                <td>{{ proveedor[4] }}</td>
-                <td>
-                    <!-- Botones de acciones (actualizar y eliminar) -->
-                    <form method="post" action="/actualizar/{{ proveedor[0] }}">
-                        <div class="form-row">
-                            <div class="form-group col-md-4">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">ID: {{ proveedor[0] }}</h5>
+                        <p class="card-text">Nombre Empresa: {{ proveedor[1] }}</p>
+                        <p class="card-text">Nombre Contacto: {{ proveedor[2] }}</p>
+                        <p class="card-text">Teléfono: {{ proveedor[3] }}</p>
+                        <p class="card-text">Correo Electrónico: {{ proveedor[4] }}</p>
+                        <form method="post" action="/actualizar/{{ proveedor[0] }}" class="mb-2">
+                            <div class="form-group">
                                 <label for="nuevo_nombre_empresa">Nuevo Nombre Empresa:</label>
                                 <input type="text" class="form-control" id="nuevo_nombre_empresa" name="nuevo_nombre_empresa" value="{{ proveedor[1] }}" required>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group">
                                 <label for="nuevo_nombre_contacto">Nuevo Nombre Contacto:</label>
                                 <input type="text" class="form-control" id="nuevo_nombre_contacto" name="nuevo_nombre_contacto" value="{{ proveedor[2] }}" required>
                             </div>
-                            <div class="form-group col-md-2">
+                            <div class="form-group">
                                 <label for="nuevo_telefono">Nuevo Teléfono:</label>
                                 <input type="text" class="form-control" id="nuevo_telefono" name="nuevo_telefono" value="{{ proveedor[3] }}" required>
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group">
                                 <label for="nuevo_correo_electronico">Nuevo Correo Electrónico:</label>
                                 <input type="email" class="form-control" id="nuevo_correo_electronico" name="nuevo_correo_electronico" value="{{ proveedor[4] }}" required>
                             </div>
-                        </div>
-                        <button type="submit" class="btn btn-warning">Actualizar</button>
-                    </form>
-                    <a href="{{ url_for('eliminar_proveedor', id_proveedor=proveedor[0]) }}" class="btn btn-danger">Eliminar</a>
-                </td>
-            </tr>
+                            <button type="submit" class="btn btn-warning btn-block">Actualizar</button>
+                        </form>
+                        <a href="{{ url_for('eliminar_proveedor', id_proveedor=proveedor[0]) }}" class="btn btn-danger btn-block">Eliminar</a>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
-        </tbody>
-    </table>
-</div>
+        </div>
+    </div>
 
-<!-- Agrega los scripts de Bootstrap y otros aquí -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- Scripts de Bootstrap y otros -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 </body>
+
 </html>
