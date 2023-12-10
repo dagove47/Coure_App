@@ -1,10 +1,72 @@
-<!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Home</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Menu</title>
+    <style>
+        body {
+            background-image: url('https://img.freepik.com/fotos-premium/pizza-italiana-tomate-pepino-queso-caja-carton-proceso-hacer-pizza-concepto-cocina-comida-callejera_636803-1975.jpg?w=2000');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .menu-button {
+            background-color: #cc0000;
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            text-decoration: none;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .menu-button:hover {
+            background-color: #990000;
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome to the Admin Page</h1>
-    <a href="/logout">Log Out</a>
+    <div class="menu-container">
+        <a href="/option1" class="menu-button">Option 1</a>
+        <a href="/option2" class="menu-button">Option 2</a>
+        <a href="/option3" class="menu-button">Option 3</a>
+        <a href="/option4" class="menu-button">Option 4</a>
+        <a href="/option5" class="menu-button">Option 5</a>
+        <a href="/option6" class="menu-button">Option 6</a>
+        <a href="/option7" class="menu-button">Option 7</a>
+        <a href="/option8" class="menu-button">Option 8</a>
+        <a href="/option9" class="menu-button">Option 9</a>
+        <a href="/option10" class="menu-button">Option 10</a>
+        <a href="/option11" class="menu-button">Option 11</a>
+        <a href="/option12" class="menu-button">Option 12</a>
+        <a href="/option13" class="menu-button">Option 13</a>
+        <a href="/option14" class="menu-button">Option 14</a>
+        <a href="/option15" class="menu-button">Option 15</a>
+        <a href="/option16" class="menu-button">Option 16</a>
+        <a href="/option17" class="menu-button">Option 17</a>
+        <a href="/option18" class="menu-button">Option 18</a>
+    </div>
+    <a href="/logout" style="color: white; text-decoration: none; margin-top: 20px; font-size: 18px;">Log Out</a>
 </body>
 </html>
