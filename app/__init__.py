@@ -410,13 +410,11 @@ def guardar_edicion(id_empleado):
 
         # Ejecutar el procedimiento PL/SQL para guardar la edición del empleado
         cursor.callproc('editar_empleado', [id_empleado, nombre, apellido, direccion, telefono, puesto, fecha_contratacion, id_usuario])
-        empleado = cursor.fetchone()
         conn.commit()
 
         return redirect('/empleados')
 
-   
-    return render_template('editar_empleado.html' , empleado=empleado)
+    return render_template('editar_empleado.html', empleado=empleado)
 
 # Ruta para eliminar un empleado
 @app.route('/eliminar_empleado/<int:id_empleado>')

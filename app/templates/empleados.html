@@ -6,10 +6,42 @@
     <title>CRUD de Empleados</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #ffe599; /* Fondo amarillo como el queso de la pizza */
+        }
+
+        .container {
+            background-color: #f4cccc; /* Color de fondo como la masa de la pizza */
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #990000; /* Color del título como el tomate de la pizza */
+        }
+
+        th, td {
+            background-color: #d9d9d9; /* Color de fondo para las celdas de la tabla */
+        }
+
+        .btn-primary, .btn-warning, .btn-danger {
+            background-color: #cc0000; /* Rojo como el color de los botones */
+            border-color: #cc0000;
+        }
+
+        .btn-primary:hover, .btn-warning:hover, .btn-danger:hover {
+            background-color: #990000; /* Cambio de color al pasar el ratón sobre los botones */
+            border-color: #990000;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-4">
-        <h2>CRUD de Empleados</h2>
+        <a href="/index.html" class="btn btn-primary mb-3">Volver al Inicio</a>
+        <h2 style="text-align: center;">CRUD de Empleados</h2>
 
         <!-- Formulario para agregar empleado -->
         <form id="formCrear" method="post" action="/crear_empleado" class="mb-4">
@@ -50,40 +82,23 @@
             <button type="submit" class="btn btn-primary">Crear Empleado</button>
         </form>
 
-        <!-- Tabla para mostrar la lista de empleados -->
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID Empleado</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Puesto</th>
-                    <th>Fecha Contratación</th>
-                    <th>ID Usuario</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for empleado in empleados %}
-                <tr>
-                    <td>{{ empleado[0] }}</td>
-                    <td>{{ empleado[1] }}</td>
-                    <td>{{ empleado[2] }}</td>
-                    <td>{{ empleado[3] }}</td>
-                    <td>{{ empleado[4] }}</td>
-                    <td>{{ empleado[5] }}</td>
-                    <td>{{ empleado[6] }}</td>
-                    <td>{{ empleado[7] }}</td>
-                    <td>
+        <!-- Cuadros para mostrar la lista de empleados -->
+        <div class="row">
+            {% for empleado in empleados %}
+            <div class="col-md-4 mb-4">
+                <div class="card" style="background-color: #ffd699; border-color: #cc0000;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ empleado[1] }} {{ empleado[2] }}</h5>
+                        <p class="card-text">ID: {{ empleado[0] }}</p>
+                        <p class="card-text">Dirección: {{ empleado[3] }}</p>
+                        <!-- Agrega más detalles según tu necesidad -->
                         <a href="{{ url_for('editar_empleado', id_empleado=empleado[0]) }}" class="btn btn-warning btn-sm">Editar</a>
                         <a href="{{ url_for('eliminar_empleado', id_empleado=empleado[0]) }}" class="btn btn-danger btn-sm">Eliminar</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
     <!-- Bootstrap JS y dependencias -->
