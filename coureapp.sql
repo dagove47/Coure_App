@@ -478,12 +478,34 @@ END ActualizarProveedor;
 /
 
 -- Eliminar un proveedor
-CREATE OR REPLACE PROCEDURE EliminarProveedor(p_IDProveedor IN NUMBER) AS
+CREATE OR REPLACE PROCEDURE EliminarProveedor(p_id_proveedor IN NUMBER)
+IS
+    v_num_ingredientes NUMBER;
+
+    -- Definir excepción personalizada para el caso de proveedor con ingredientes
+    prov_con_ingredientes EXCEPTION;
 BEGIN
-    DELETE FROM Proveedor WHERE ID_PROVEEDOR = p_IDProveedor;
+    -- Verificar si el proveedor tiene ingredientes asociados
+    SELECT COUNT(1) INTO v_num_ingredientes
+    FROM ingredientes
+    WHERE proveedor = p_id_proveedor;
+
+    -- Si hay ingredientes asociados, lanzar la excepción
+    IF v_num_ingredientes > 0 THEN
+        RAISE prov_con_ingredientes;
+    END IF;
+
+    -- Eliminar el proveedor si no hay ingredientes asociados
+    DELETE FROM proveedor WHERE id_proveedor = p_id_proveedor;
     COMMIT;
+
+EXCEPTION
+    -- Capturar y manejar la excepción de proveedor con ingredientes
+    WHEN prov_con_ingredientes THEN
+        DBMS_OUTPUT.PUT_LINE('No se puede eliminar el proveedor. Tiene ingredientes asociados.');
+        -- Puedes realizar otras acciones aquí, como registrar el evento en una tabla de registro de errores.
+        -- También podrías relanzar la excepción o manejarla de manera diferente según tus necesidades.
 END EliminarProveedor;
-/
 
 --mesas
 CREATE TABLE Mesas (
