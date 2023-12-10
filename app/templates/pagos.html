@@ -7,14 +7,36 @@
     <title>CRUD de Pagos</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .update-form {
-            display: none;
+        body {
+            background: url('https://wallpapersmug.com/download/3840x2160/b67e3e/pizza-slices-food.jpg') center center fixed;
+            background-size: cover;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .btn-primary, .btn-warning, .btn-danger {
+            background-color: #f83f24;
+            border-color: #f83f24;
+        }
+
+        .btn-primary:hover, .btn-warning:hover, .btn-danger:hover {
+            background-color: #cc3420;
+            border-color: #cc3420;
         }
     </style>
 </head>
 
 <body>
     <div class="container mt-3">
+        <a href="/index.html" class="btn btn-primary mb-3">Ir a Inicio</a>
         <h2>Pagos</h2>
         <form action="/agregar" method="post">
             <div class="form-row">
