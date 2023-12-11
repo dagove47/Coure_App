@@ -1006,7 +1006,7 @@ def listar_reservaciones():
 
     return render_template('reservaciones.html', reservaciones=reservaciones)
 
-@app.route('/crear', methods=['GET', 'POST'])
+@app.route('/crearreservacion', methods=['GET', 'POST'])
 def crear_reservacion():
     if request.method == 'POST':
         conn, cursor = get_db_connection()
