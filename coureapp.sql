@@ -899,3 +899,69 @@ BEGIN
     RETURN resenas_cursor;
 END obtener_resenas;
 
+
+
+CREATE TABLE Reservaciones (
+    id_reservacion NUMBER PRIMARY KEY,
+    fecha_hora_reservacion TIMESTAMP,
+    numero_personas NUMBER
+);
+
+CREATE OR REPLACE PROCEDURE insertar_reservacion(
+    p_id_reservacion IN NUMBER,
+    p_fecha_hora IN TIMESTAMP,
+    p_numero_personas IN NUMBER
+)
+AS
+BEGIN
+    INSERT INTO Reservaciones (id_reservacion, fecha_hora_reservacion, numero_personas)
+    VALUES (p_id_reservacion, p_fecha_hora, p_numero_personas);
+    COMMIT;
+END insertar_reservacion;
+/
+
+CREATE OR REPLACE PROCEDURE actualizar_reservacion(
+    p_id_reservacion IN NUMBER,
+    p_nueva_fecha_hora IN TIMESTAMP,
+    p_nuevo_numero_personas IN NUMBER
+)
+AS
+BEGIN
+    UPDATE Reservaciones
+    SET fecha_hora_reservacion = p_nueva_fecha_hora,
+        numero_personas = p_nuevo_numero_personas
+    WHERE id_reservacion = p_id_reservacion;
+    COMMIT;
+END actualizar_reservacion;
+/
+
+
+CREATE OR REPLACE FUNCTION obtener_reservacion(p_id_reservacion IN NUMBER)
+RETURN Reservaciones%ROWTYPE
+AS
+    v_reservacion Reservaciones%ROWTYPE;
+BEGIN
+    SELECT *
+    INTO v_reservacion
+    FROM Reservaciones
+    WHERE id_reservacion = p_id_reservacion;
+
+    RETURN v_reservacion;
+END obtener_reservacion;
+/
+
+
+
+CREATE OR REPLACE PROCEDURE eliminar_reservacion(p_id_reservacion IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Reservaciones WHERE id_reservacion = p_id_reservacion;
+    COMMIT;
+END eliminar_reservacion;
+/
+
+INSERT INTO Reservaciones (id_reservacion, fecha_hora_reservacion, numero_personas)
+VALUES (1, TO_TIMESTAMP('2023-12-09 14:30:00', 'YYYY-MM-DD HH24:MI:SS'), 5);
+
+INSERT INTO Reservaciones (id_reservacion, fecha_hora_reservacion, numero_personas)
+VALUES (2, TO_TIMESTAMP('2023-12-10 18:00:00', 'YYYY-MM-DD HH24:MI:SS'), 3);
