@@ -97,4 +97,13 @@ button{
     }
 
 
+    .custom-label {
+        background: rgba(253, 241, 217); /* Color del texto */
+    }
+
+    .custom-input {
+        background-color: rgba(253, 241, 217); /* Color de fondo del input */
+    }
+
+
 

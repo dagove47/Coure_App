@@ -1074,37 +1074,56 @@ def eliminar_reservacion(id_reservacion):
 
     return redirect(url_for('listar_reservaciones'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
+#if __name__ == '__main__':
+#    app.run(debug=True)
 
 
 
+## ------------   DETALLES DEL PEDIDO   --------------
+@app.route('/detallespedido' , methods=['GET', 'POST'])
+def detalles_pedido():
+    conn, cursor = get_db_connection()
+    try:
+        if request.method == 'POST':
+            search_term = request.form['search_term']
+            resultado = cursor.var(cx_Oracle.CURSOR)
+            cursor.callproc("buscar_platillos", [search_term, resultado])
+            detalles_pedidos_cursor = resultado.getvalue()
+            detalles_pedidos = detalles_pedidos_cursor.fetchall()
 
+        else:
+            resultado = cursor.var(cx_Oracle.CURSOR)
+            cursor.callproc("ObtenerDetallesPedidos" , [resultado])
+            detalles_pedidos_cursor = resultado.getvalue()
+            detalles_pedidos = detalles_pedidos_cursor.fetchall()
+            print(f"detalles_pedidos : {detalles_pedidos}")
+        
+        return render_template('detallespedido.html', detalles_pedidos=detalles_pedidos)
+    except Exception as e:
+        error = "Failed to fetch details of orders"
+        print(f"Error: {e}")
+        return render_template('detallespedido.html', error=error)
+       
+    finally:
+        close_db_connection(conn, cursor)
 
-# print("************* TEST ---------")
+        #cursor.execute("select * from detallespedido")
 
-# @app.route('/')
-# def index():
-#     # Aquí puedes realizar consultas a la base de datos Oracle
-#     cursor = conn.cursor()
-#     cursor.execute('SELECT * FROM NOMBRES')
-#     data = cursor.fetchall()
-#     cursor.close()
+        #cursor.execute( """
+        #SELECT dp.id_dt, ped.id_pedido, p.nombre, p.descripcion, p.tipoplatillo
+        #FROM detallespedido dp
+        #JOIN platillos p ON dp.id_platillo = p.idplatillo
+        #JOIN pedidos ped ON dp.id_pedido = ped.id_pedido
+        #ORDER BY ped.Fecha_hora_pedido DESC
+        # """)
 
-#     return render_template('index.html', data=data)
-
-# @app.route('/get_names')
-# def get_names():
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT NOMBRE FROM NOMBRES")
-#     data = cursor.fetchall()
-#     cursor.close()
-
-#     return jsonify(data)
-
-# @app.route('/signin')
-# def signin():
-#     return render_template('signin.html')
-
-
-
+@app.route('/eliminar_detalle_pedido/<int:id_dt>')
+def eliminar_detalle_pedido(id_dt):
+    conn, cursor = get_db_connection()
+    #id_dt = request.form['id_dt']
+    cursor.callproc("eliminar_detalle_pedido", [id_dt])
+    conn.commit()
+    close_db_connection(conn,cursor)
+    return redirect(url_for('detalles_pedido'))
+    
+    

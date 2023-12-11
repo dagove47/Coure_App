@@ -789,13 +789,60 @@ END;
 
 -- //DETALLES DE PEDIDO 
 
-CREATE TABLE detallespedido(
-id_dt number primary key,
-foreign key (ID_pedido) references Pedidos (ID_pedido),
-foreign key (IDPlatillo) references Platillos (IDPlatillo),
-cantidad number
-total number, 
+CREATE TABLE detallespedido (
+    id_dt NUMBER PRIMARY KEY,
+    id_pedido NUMBER,
+    id_platillo NUMBER,
+    FOREIGN KEY (id_pedido) REFERENCES pedidos (id_pedido),
+    FOREIGN KEY (id_platillo) REFERENCES platillos (idplatillo)
+);
+
+-- SP para obtener los datos 
+CREATE OR REPLACE PROCEDURE ObtenerDetallesPedidos (
+    resultados OUT SYS_REFCURSOR
 )
+AS
+BEGIN
+    OPEN resultados FOR
+    SELECT dp.id_dt, ped.id_pedido, p.nombre, p.descripcion, p.tipoplatillo
+    FROM detallespedido dp
+    JOIN platillos p ON dp.id_platillo = p.idplatillo
+    JOIN pedidos ped ON dp.id_pedido = ped.id_pedido;
+END ObtenerDetallesPedidos;
+
+--SQL dinamico para eliminar detalles del pedido.
+
+CREATE OR REPLACE PROCEDURE eliminar_detalle_pedido(p_id_dt IN NUMBER) AS
+    v_sql VARCHAR2(100);
+BEGIN
+    v_sql := 'DELETE FROM detallespedido WHERE id_dt = :id_dt';
+    EXECUTE IMMEDIATE v_sql USING p_id_dt;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('Línea eliminada correctamente');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error al eliminar la línea');
+        ROLLBACK;
+END eliminar_detalle_pedido;
+/
+
+
+CREATE OR REPLACE PROCEDURE buscar_platillos(
+    p_search_term IN VARCHAR2,
+    p_result OUT SYS_REFCURSOR
+) AS
+BEGIN
+    OPEN p_result FOR
+        SELECT dp.id_dt, ped.id_pedido, p.nombre, p.descripcion, p.tipoplatillo
+        FROM detallespedido dp
+        JOIN platillos p ON dp.id_platillo = p.idplatillo
+        JOIN pedidos ped ON dp.id_pedido = ped.id_pedido
+        WHERE REGEXP_LIKE(p.nombre, p_search_term, 'i');
+END buscar_platillos;
+/
+
+
+
 
 -- // FINALIZA DETALLES DE PEDIDO 
 
