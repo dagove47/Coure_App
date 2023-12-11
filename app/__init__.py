@@ -1081,6 +1081,7 @@ def eliminar_reservacion(id_reservacion):
 
 ## ------------   DETALLES DEL PEDIDO   --------------
 @app.route('/detallespedido' , methods=['GET', 'POST'])
+@role_required(required_role=1)
 def detalles_pedido():
     conn, cursor = get_db_connection()
     try:
@@ -1118,6 +1119,7 @@ def detalles_pedido():
         # """)
 
 @app.route('/eliminar_detalle_pedido/<int:id_dt>')
+@role_required(required_role=1)
 def eliminar_detalle_pedido(id_dt):
     conn, cursor = get_db_connection()
     #id_dt = request.form['id_dt']
