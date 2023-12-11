@@ -785,6 +785,21 @@ END;
 
 --// FINALIZA PROMOCIONES E INGREDIENTES
 
+
+
+-- //DETALLES DE PEDIDO 
+
+CREATE TABLE detallespedido(
+id_dt number primary key,
+foreign key (ID_pedido) references Pedidos (ID_pedido),
+foreign key (IDPlatillo) references Platillos (IDPlatillo),
+cantidad number
+total number, 
+)
+
+-- // FINALIZA DETALLES DE PEDIDO 
+
+
 -- CRUD PEDIDOS
 -- CREATE
 CREATE OR REPLACE PROCEDURE Insertar_Pedido(
