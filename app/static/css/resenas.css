@@ -1,0 +1,74 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f1e9; /* Color de fondo */
+    color: #5e493a; /* Color del texto principal */
+    margin: 20px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.unsplash.com/photo-1622880833523-7cf1c0bd4296?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+}
+
+h1 {
+    color: #8c6451; /* Color del título principal */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #8c6451; /* Color del borde de la tabla */
+}
+
+th {
+    background-color: #b89b7d; /* Color de fondo de las celdas del encabezado */
+}
+
+tr:nth-child(even) {
+    background-color: #e5d9c7; /* Color de fondo de las filas pares */
+}
+
+form {
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #8c6451; /* Color del texto de las etiquetas */
+}
+
+input[type="text"],
+input[type="number"],
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    background-color: #b89b7d; /* Color de fondo del botón */
+    color: #fff; /* Color del texto del botón */
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #8c6451; /* Cambiar el color de fondo al pasar el ratón sobre el botón */
+}
+
+/* Estilos específicos para el enlace "Eliminar" */
+a {
+    text-decoration: none;
+    color: #8c6451; /* Color del texto del enlace */
+}
+
+a:hover {
+    color: #5e493a; /* Cambiar el color del texto al pasar el ratón sobre el enlace */
+}
