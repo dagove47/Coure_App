@@ -1038,7 +1038,7 @@ def editar_reservacion(id_reservacion):
     cursor = conn.cursor()
 
     # Obtener datos de la reservación a editar
-    cursor.callproc('obtener_reservacion',[id_reservacion])
+    cursor.callfunc('obtener_reservacion',[id_reservacion])
     reservacion = cursor.fetchone()
 
     if request.method == 'POST':
