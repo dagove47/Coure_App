@@ -980,3 +980,33 @@ VALUES (1, TO_TIMESTAMP('2023-12-09 14:30:00', 'YYYY-MM-DD HH24:MI:SS'), 5);
 
 INSERT INTO Reservaciones (id_reservacion, fecha_hora_reservacion, numero_personas)
 VALUES (2, TO_TIMESTAMP('2023-12-10 18:00:00', 'YYYY-MM-DD HH24:MI:SS'), 3);
+
+
+
+
+
+------ Expreciones regulares----- 
+
+-- Restriccion de numero de telefono en la tabla de empleados 
+ALTER TABLE empleados
+ADD CONSTRAINT chk_telefono_format
+CHECK (REGEXP_LIKE(telefono, '^[0-9]{10}$', 'c'));
+
+
+----- SQL DINAMICO ------ 
+
+ --- Realizar una consulta con sql dinamico 
+CREATE OR REPLACE FUNCTION buscar_empleados_por_criterio(p_criterio VARCHAR2) RETURN SYS_REFCURSOR
+IS
+    v_cursor SYS_REFCURSOR;
+    v_sql VARCHAR2(1000);
+BEGIN
+    -- Construir la consulta dinámica
+    v_sql := 'SELECT * FROM empleados WHERE ' || p_criterio;
+
+    -- Ejecutar la consulta dinámica
+    OPEN v_cursor FOR v_sql;
+
+    -- Devolver el cursor
+    RETURN v_cursor;
+END buscar_empleados_por_criterio;
