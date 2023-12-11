@@ -1017,6 +1017,9 @@ def crear_reservacion():
         fecha_hora = request.form['fecha_hora']
         numero_personas = request.form['numero_personas']
 
+        # Convertir la cadena de fecha y hora a un objeto datetime
+        fecha_hora = datetime.strptime(fecha_hora, '%Y-%m-%dT%H:%M')
+
         # Lógica para crear una nueva reservación
         cursor.callproc('insertar_reservacion', (id_reservacion, fecha_hora, numero_personas))
         conn.commit()
