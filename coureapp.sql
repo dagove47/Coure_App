@@ -706,9 +706,9 @@ END editar_ingrediente;
 /
 
 --//eliminar
-CREATE OR REPLACE PROCEDURE eliminar_ingrediente(i_id IN VARCHAR2) AS
+CREATE OR REPLACE PROCEDURE eliminar_ingrediente(p_id IN NUMBER) AS
 BEGIN
-    DELETE FROM Ingredientes WHERE id = p_id;
+    DELETE FROM Ingredientes WHERE id_in = p_id;
     COMMIT;
 END eliminar_ingrediente;
 
