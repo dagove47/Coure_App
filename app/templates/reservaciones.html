@@ -65,12 +65,12 @@
             <tbody>
                 {% for reservacion in reservaciones %}
                     <tr>
-                        <td>{{ reservacion.ID_RESERVACION }}</td>
-                        <td>{{ reservacion.FECHA_HORA_RESERVACION }}</td>
-                        <td>{{ reservacion.NUMERO_PERSONAS }}</td>
+                        <td>{{ reservacion [0] }}</td>
+                        <td>{{ reservacion [1] }}</td>
+                        <td>{{ reservacion [2] }}</td>
                         <td>
-                            <a href="{{ url_for('editar_reservacion', id_reservacion=reservacion.ID_RESERVACION) }}" class="btn btn-warning">Editar</a>
-                            <a href="{{ url_for('eliminar_reservacion', id_reservacion=reservacion.ID_RESERVACION) }}" class="btn btn-danger">Eliminar</a>
+                            <a href="{{ url_for('editar_reservacion', id_reservacion=reservacion[0]) }}" class="btn btn-warning">Editar</a>
+                            <a href="{{ url_for('eliminar_reservacion', id_reservacion=reservacion[0]) }}" class="btn btn-danger">Eliminar</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -98,7 +98,7 @@
         <!-- Formulario para editar reservación -->
         {% if reservacion %}
             <h3 class="mt-4">Editar Reservación</h3>
-            <form method="POST" action="{{ url_for('editar_reservacion', id_reservacion=reservacion.ID_RESERVACION) }}">
+            <form method="POST" action="{{ url_for('editar_reservacion', id_reservacion=reservacion[0]) }}">
                 <div class="form-group">
                     <label for="nueva_fecha_hora">Nueva Fecha y Hora</label>
                     <input type="datetime-local" class="form-control" id="nueva_fecha_hora" name="nueva_fecha_hora" value="{{ reservacion.FECHA_HORA_RESERVACION }}" required>

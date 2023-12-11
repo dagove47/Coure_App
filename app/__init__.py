@@ -1021,7 +1021,7 @@ def crear_reservacion():
         fecha_hora = datetime.strptime(fecha_hora, '%Y-%m-%dT%H:%M')
 
         # Lógica para crear una nueva reservación
-        cursor.callproc('insertar_reservacion', (id_reservacion, fecha_hora, numero_personas))
+        cursor.callproc('insertar_reservacion', [id_reservacion, fecha_hora, numero_personas])
         conn.commit()
 
         cursor.close()
@@ -1031,13 +1031,14 @@ def crear_reservacion():
 
     return render_template('reservaciones.html')
 
-@app.route('/editar/<int:id_reservacion>', methods=['GET', 'POST'])
+
+@app.route('/editarreservacion/<int:id_reservacion>', methods=['GET', 'POST'])
 def editar_reservacion(id_reservacion):
     conn, cursor = get_db_connection()
     cursor = conn.cursor()
 
     # Obtener datos de la reservación a editar
-    cursor.callproc('obtener_reservacion', (id_reservacion,))
+    cursor.callproc('obtener_reservacion',[id_reservacion])
     reservacion = cursor.fetchone()
 
     if request.method == 'POST':
@@ -1046,7 +1047,7 @@ def editar_reservacion(id_reservacion):
         nuevo_numero_personas = request.form['nuevo_numero_personas']
 
         # Lógica para actualizar la reservación
-        cursor.callproc('actualizar_reservacion', (id_reservacion, nueva_fecha_hora, nuevo_numero_personas))
+        cursor.callproc('actualizar_reservacion', [id_reservacion, nueva_fecha_hora, nuevo_numero_personas])
         conn.commit()
 
         cursor.close()
@@ -1059,13 +1060,13 @@ def editar_reservacion(id_reservacion):
 
     return render_template('reservaciones.html', reservacion=reservacion)
 
-@app.route('/eliminar/<int:id_reservacion>')
+@app.route('/eliminarreservacion/<int:id_reservacion>')
 def eliminar_reservacion(id_reservacion):
     conn, cursor = get_db_connection()
     cursor = conn.cursor()
 
     # Lógica para eliminar la reservación
-    cursor.callproc('eliminar_reservacion', (id_reservacion,))
+    cursor.callproc('eliminar_reservacion', [id_reservacion])
     conn.commit()
 
     cursor.close()
