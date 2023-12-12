@@ -5,10 +5,11 @@
     <title>Admin Menu</title>
     <style>
         body {
-            background-image: url('https://img.freepik.com/fotos-premium/pizza-italiana-tomate-pepino-queso-caja-carton-proceso-hacer-pizza-concepto-cocina-comida-callejera_636803-1975.jpg?w=2000');
-            background-size: cover;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)), url("https://images.unsplash.com/photo-1579027989536-b7b1f875659b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
             background-position: center;
-            height: 100vh;
+            background-repeat: no-repeat;
+            background-size: cover;
+            min-height: 100vh;
             margin: 0;
             display: flex;
             align-items: center;
@@ -46,7 +47,7 @@
     </style>
 </head>
 <body>
-    <h1>Welcome to the Admin Page</h1>
+    <h1>Bienvenido a la pagina como Administrador</h1>
     <div class="menu-container">
         <a href="/pagos" class="menu-button">Pagos</a>
         <a href="/empleados" class="menu-button">Empleados</a>
@@ -58,9 +59,9 @@
         <a href="admin/promociones" class="menu-button">Promociones</a>
         <a href="/tablaingredientes" class="menu-button">Ingredientes</a>
         <a href="/detallespedido" class="menu-button">Detalles Pedidos</a>
-        <a href="/resenas" class="menu-button">Option 11</a>
-        <a href="/pedidos" class="menu-button">Option 12</a>
+        <a href="/resenas" class="menu-button">Reseñas</a>
+        <a href="/pedidos" class="menu-button">Pedidos</a>
     </div>
-    <a href="/logout" style="color: white; text-decoration: none; margin-top: 20px; font-size: 18px;">Log Out</a>
+    <a href="/logout" style="color: white; text-decoration: none; margin-top: 20px; font-size: 18px;">Cerrar sesión</a>
 </body>
 </html>
